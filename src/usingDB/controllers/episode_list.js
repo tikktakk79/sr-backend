@@ -77,6 +77,38 @@ async gradeProgram(req, res) {
     }
   },
 
+  async updateProgram(req, res){
+
+    const createQuery = 
+    `UPDATE programbetyg
+     SET betyg = $1
+     WHERE anvandare =$2
+     AND programid = $3
+     RETURNING *  
+    `
+
+    let grade = req.body.grade
+
+    if (!!grade) {
+      grade = parseInt(grade)
+    }
+
+    const values = [
+      grade,
+      req.user.username,
+      req.body.program_id, 
+    ]
+
+    try {
+      const rows = await db.query(createQuery, values)
+      console.log("Update program worked and returned rows:",rows)
+      return res.status(201).send(rows[0])
+    } catch (error) {
+      console.log("Update program didn't work", error)
+      return res.status(400).send(error)
+    }
+  },
+
   async getPrograms(req, res) {
     const createQuery = `
     SELECT * FROM programbetyg

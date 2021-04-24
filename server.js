@@ -52,6 +52,7 @@ app.post(
 )
 app.get("/api/program", Auth.verifyToken, Episode.getPrograms)
 app.post("/api/program", Auth.verifyToken, Episode.gradeProgram)
+app.post("/api/program/update", Auth.verifyToken, Episode.updateProgram)
 app.post("/api/episode/delete", Auth.verifyToken, Episode.deleteEpisode)
 app.post("/api/rec", Auth.verifyToken, Rec.saveRec)
 app.get("/api/rec", Auth.verifyToken, Rec.listRecs)
