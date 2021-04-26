@@ -109,6 +109,32 @@ async gradeProgram(req, res) {
     }
   },
 
+  async deleteProgram(req, res){
+
+    const createQuery = 
+    ` DELETE  from programbetyg 
+      WHERE anvandare 
+        LIKE $1
+      AND 
+        programid LIKE $2
+      RETURNING *
+    `
+
+    const values = [
+      req.user.username,
+      req.body.program_id, 
+    ]
+
+    try {
+      const rows = await db.query(createQuery, values)
+      console.log("Delete program worked and returned rows:",rows)
+      return res.status(201).send(rows[0])
+    } catch (error) {
+      console.log("Delete program didn't work", error)
+      return res.status(400).send(error)
+    }
+  },
+
   async getPrograms(req, res) {
     const createQuery = `
     SELECT * FROM programbetyg
