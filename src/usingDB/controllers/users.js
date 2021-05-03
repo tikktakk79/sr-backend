@@ -192,19 +192,10 @@ const User = {
 
   async searchUsers(req, res) {
     console.log("Searching for users")
-    const createQuery = `SELECT anvandarnamn, fornamn, efternamn, hemligt FROM anvandare
+    const createQuery = `SELECT anvandarnamn, hemligt FROM anvandare
     WHERE
       anvandarnamn ILIKE
         $1
-    OR
-      fornamn ILIKE
-        $2
-    OR
-      efternamn ILIKE
-        $3
-    OR
-      email ILIKE
-        $4
    `
 
     console.log("QUERY", req.query)
@@ -215,12 +206,13 @@ const User = {
     let lastname = req.query.lastname || ""
     let email = req.query.email || ""
 
-    const values = [username, firstname, lastname, email]
+    const values = [username]
 
     console.log("VALUES", values)
 
     try {
       const { rows } = await db.query(createQuery, values)
+      console.log("Rows from searchUsers", rows);
       let rowsMod = rows.filter((row) => row.anvandarnamn !== req.user.username)
       return res.status(201).send(rowsMod)
     } catch (error) {
