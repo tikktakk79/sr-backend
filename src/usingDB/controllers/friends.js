@@ -1,5 +1,5 @@
 import db from "../db"
-import helper from "../../helper.js"
+import Helper from "./Helper.js"
 
 const Friend = {
   async addFriend(req, res) {
@@ -45,7 +45,7 @@ const Friend = {
 
     try {
       const { rows, rowCount } = await db.query(createQuery, values)
-      let friendsMod = helper.userRelations(req.user.username, rows)
+      let friendsMod = Helper.userRelations(req.user.username, rows)
       return res.status(200).send(friendsMod)
     } catch (error) {
       return res.status(400).send(error)
@@ -76,7 +76,7 @@ const Friend = {
     console.log("Running list friends from backend")
     const createQuery = `
     SELECT
-      id, vanner.anvandare1, vanner.anvandare2, godkann, ny_fraga, anv1.fornamn AS fnamn1, anv1.efternamn AS enamn1, anv1.email AS email1, anv1.hemligt AS hemligt1, anv2.fornamn AS fnamn2, anv2.efternamn AS enamn2, anv2.email AS email2, anv2.hemligt AS hemligt2
+      id, vanner.anvandare1, vanner.anvandare2, vanner.godkann, vanner.ny_fraga, anv1.fornamn AS fnamn1, anv1.efternamn AS enamn1, anv1.email AS email1, anv1.hemligt AS hemligt1, anv2.fornamn AS fnamn2, anv2.efternamn AS enamn2, anv2.email AS email2, anv2.hemligt AS hemligt2
     FROM
       vanner
     JOIN
@@ -102,7 +102,7 @@ const Friend = {
       const { rows, rowCount } = await db.query(createQuery, values)
 
       console.log("RÖUUWS", rows)
-      let friendsMod = helper.userRelations(req.user.username, rows)
+      let friendsMod = Helper.userRelations(req.user.username, rows)
       return res.status(200).send({ friendsMod, rowCount })
     } catch (error) {
       return res.status(400).send(error)
