@@ -84,6 +84,40 @@ const Helper = {
     console.log("friensMod from helper method", friendsMod)
 
     return friendsMod
+  },
+  async permissionFriend(db, req) {
+
+    let createQuery1 = `
+      SELECT hemligt from anvandare 
+      WHERE
+        anvandarnamn LIKE $1
+    `
+
+    let { rows } = await db.query(createQuery1, [req.body.username])
+
+    if (!rows[0].hemligt) {
+      console.log("TRUE DAT");
+      return true
+    }
+
+    let createQuery2 = `
+    select * from vanner
+    where 
+      (anvandare1 LIKE $1 AND anvandare2 LIKE $2)
+    OR 
+      (anvandare2 LIKE $1 AND anvandare1 LIKE $2)
+    AND  
+      (godkann IS NULL OR godkann LIKE $1)
+    `
+
+    let rows2 = await db.query(createQuery2, [req.user.username, req.body.username])
+    
+    if(rows2.rows.length) {
+      console.log("TRUE DAT");
+      return true
+    }
+    console.log("FALSE DAT");
+    return false
   }
 }
 

@@ -45,11 +45,6 @@ app.post("/api/user/password", Auth.verifyToken, User.changePassword)
 app.post("/api/grade", Auth.verifyToken, Episode.setGrade)
 app.post("/api/episode", Auth.verifyToken, Episode.saveEpisode)
 app.get("/api/episode", Auth.verifyToken, Episode.listEpisodes)
-app.post(
-  "/api/episode/external",
-  Auth.verifyToken,
-  Episode.externalListEpisodes
-)
 app.get("/api/program", Auth.verifyToken, Episode.getPrograms)
 app.post("/api/program", Auth.verifyToken, Episode.gradeProgram)
 app.post("/api/program/update", Auth.verifyToken, Episode.updateProgram)
@@ -63,6 +58,8 @@ app.post("/api/friend/accept", Auth.verifyToken, Friend.acceptFriend)
 app.post("/api/friend/wait", Auth.verifyToken, Friend.waitFriend)
 app.post("/api/friend/delete", Auth.verifyToken, Friend.deleteFriend)
 app.post("/api/friend/update", Auth.verifyToken, Friend.setOld)
+app.post("/api/friend/episode", Auth.verifyToken, Friend.episode)
+app.post("/api/friend/program", Auth.verifyToken, Friend.program)
 app.get("/api/friend", Auth.verifyToken, Friend.listFriends)
 app.get("/api/secret", Auth.verifyToken, Friend.getSecret)
 app.post("/api/secret", Auth.verifyToken, Friend.setSecret)

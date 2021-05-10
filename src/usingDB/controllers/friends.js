@@ -1,4 +1,5 @@
 import db from "../db"
+import Episode from "./episode_list"
 import Helper from "./Helper.js"
 
 const Friend = {
@@ -189,6 +190,41 @@ const Friend = {
     } catch (error) {
       return res.status(400).send(error)
     }
+  },
+
+  async program(req, res) {
+    console.log("req.body", req.body)
+    let permission = await Helper.permissionFriend(db, req)
+
+    if (!permission ) {
+      return res.status(400)
+    }
+
+    let request = {...req}
+
+    request.user.username = req.body.username
+
+    console.log("Permission granted to send friend programs");
+
+    Episode.getPrograms(request, res)
+  },
+
+  async episode(req, res) {
+    console.log("req.body", req.body)
+    let permission = await Helper.permissionFriend(db, req)
+
+    ;
+    if (!permission ) {
+      return res.status(400)
+    }
+
+    console.log("Permission granted to send friend episodes");
+
+    let request = {...req}
+
+    request.user.username = req.body.username
+
+    Episode.listEpisodes(request, res)
   }
 }
 

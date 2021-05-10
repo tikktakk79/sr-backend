@@ -226,43 +226,7 @@ async gradeProgram(req, res) {
     } catch (error) {
       return res.status(400).send(error)
     }
-  },
-  async externalListEpisodes(req, res) {
-    console.log("RUNNING EXT LIST EPISODES IN episode_list")
-    const createQuery1 = `
-    SELECT hemligt FROM anvandare
-    WHERE
-      anvandarnamn = $1
-    `
-    const createQuery2 = `
-    SELECT * FROM vanner
-    where
-      anvandare1 = $1 AND anvandare2 = $2
-    OR
-      anvandare1 = $2 AND anvandare2 = $1
-    `
-    console.log("uname from exteplist in backend:", req.body.username)
-    let { rows } = await db.query(createQuery1, [req.body.username])
-    let secret = rows[0].hemligt
-    console.log("HEMLIGT", secret)
 
-    console.log("ROWS", rows)
-
-    if (!secret) {
-      req.user.username = req.body.username
-      await Episode.listEpisodes(req, res)
-    } else {
-      let { rows } = await db.query(createQuery2, [
-        req.user.username,
-        req.body.username
-      ])
-      if (rows.length && [null, req.user.username].includes(rows[0].godkann)) {
-        req.user.username = req.body.username
-        await Episode.listEpisodes(req, res)
-      } else {
-        return res.status(400).send("User does not share this information")
-      }
-    }
   }
 }
 
