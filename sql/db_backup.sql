@@ -5,12 +5,12 @@
 -- Dumped from database version 13.2
 -- Dumped by pg_dump version 13.0
 
--- Started on 2021-04-15 10:14:59 CEST
+-- Started on 2021-05-12 13:50:10 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'ISO_8859_5';
+SET client_encoding = 'ISO_8859_8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
@@ -266,9 +266,12 @@ ALTER TABLE ONLY public.vanner ALTER COLUMN id SET DEFAULT nextval('public.vanne
 
 COPY public.anvandare (anvandarnamn, fornamn, efternamn, email, losenord, hemligt) FROM stdin;
 Adam	Adam	Persson	\N	aaaaaaaa	f
-Eva	Eva	Persson	\N	bbbbbbbb	f
 www	www	www		$2b$08$TliqM23qyt43PpqGmtcPx.SnnuiNQ221OG2bBPU/bvFO54evdPmi6	f
 bbb				$2b$08$muGLtKD1PbsHKKcQM13l3eRF86Tae4wws/10aeq9u7iJm1H2vnede	f
+Beda				$2b$08$yuJ0HMpuYqFzA84zWqa30eW0Q4e5o9g6QSTLCrcKpda8.HCLDcCH2	f
+ccc				$2b$08$kfFMylJgQkOhcaxhx2AWie2AXfMCv4Ezr94.gpB.iskx6eU4nb/We	f
+ddd				$2b$08$9FXn6d7AGudyWcJNgn69ZOFDx3lGHj2WEK6IaB8.30RimqvWq51Um	f
+Eva	Eva	Persson	\N	bbbbbbbb	f
 \.
 
 
@@ -279,26 +282,6 @@ bbb				$2b$08$muGLtKD1PbsHKKcQM13l3eRF86Tae4wws/10aeq9u7iJm1H2vnede	f
 --
 
 COPY public.programbetyg (id, anvandare, programnamn, programid, betyg) FROM stdin;
-\.
-
-
---
--- TOC entry 3298 (class 0 OID 16536)
--- Dependencies: 202
--- Data for Name: rekommendationer; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.rekommendationer (id, tipsare, mottagare, beskrivning, avsnitt) FROM stdin;
-\.
-
-
---
--- TOC entry 3302 (class 0 OID 16634)
--- Dependencies: 206
--- Data for Name: sparade_avsnitt; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.sparade_avsnitt (id, anvandare, avsnitt, titel, program_namn, beskrivning, url, pub_datum_utc, program_id, betyg) FROM stdin;
 \.
 
 
