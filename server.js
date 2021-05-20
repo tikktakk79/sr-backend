@@ -11,6 +11,7 @@ import EpisodeWithDb from "./usingDB/controllers/episode_list"
 import RecWithDb from "./usingDB/controllers/recommendations"
 import FriendWithDb from "./usingDB/controllers/friends"
 import Auth from "./usingDB/middleware/Auth"
+import authenticateTokenWhilePending from "./usingDB/middleware/checkAuthWhilePending"
 
 const User = UserWithDb
 const Episode = EpisodeWithDb
@@ -36,6 +37,7 @@ app.get("/", (req, res) => {
 })
 
 app.post("/api/user", User.createUser)
+app.get("/api/user/verification/verify-account/:secretCode", User.verifyAccount)
 app.post("/api/user/login", User.loginUser)
 app.post("/api/user/delete", Auth.verifyToken, User.deleteUser)
 app.get("/api/user/search", Auth.verifyToken, User.searchUsers)

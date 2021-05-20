@@ -2,9 +2,24 @@ import moment from "moment"
 import { v4 as uuidv4 } from "uuid"
 import db from "../db"
 import Helper from "./Helper"
+import nodemailer from "nodemailer"
+import jwt from "jsonwebtoken"
+// const cryptoRandomString =  require("crypto-random-string")
+const Str = require('@supercharge/strings')
 const dotenv = require("dotenv")
+const express = require('express');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'stellanurbansson@gmail.com',
+    pass: process.env.EMAIL_PASSWORD // naturally, replace both with your real credentials or an application-specific password
+  }
+});
 
 dotenv.config("../../../.env")
+
+var rand,mailOptions,host,link
 
 const User = {
   /**
@@ -15,35 +30,92 @@ const User = {
    */
   async createUser(req, res) {
     console.log("Entering create function")
-    if (!req.body.password || !req.body.username) {
+    if (!req.body.password || !req.body.username || !req.body.email) {
       return res.status(400).send({ message: "Alla fält är inte ifyllda" })
     }
 
     const hashPassword = Helper.hashPassword(req.body.password)
 
-    const createQuery = `INSERT INTO
-      anvandare (anvandarnamn, fornamn, efternamn, email, losenord)
-      VALUES ($1, $2, $3, $4, $5)
-      returning *`
-    const values = [
-      req.body.username,
-      req.body.firstname,
-      req.body.lastname,
-      req.body.email,
-      hashPassword //hashPassword
-    ]
+    const removeDuplicate = 
+    `DELETE FROM anvandare
+      WHERE
+        status = 'pending'
+      AND
+        email = $1
+    `
 
-    try {
-      const { rows } = await db.query(createQuery, values)
-      const token = Helper.generateToken(rows[0].anvandarnamn)
-      return res.status(201).send({ token })
-    } catch (error) {
-      if (error.routine === "_bt_check_unique") {
-        return res.status(400).send({ message: "Användarnamnet är upptaget" })
-      }
-      console.log("Something failed and I don't know what!")
-      return res.status(400).send(error)
-    }
+    const createQuery = `INSERT INTO
+      anvandare (anvandarnamn, fornamn, efternamn, email, losenord, aktiveringskod)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      returning *`
+
+
+    
+      
+      // const token = Helper.generateToken(rows[0].anvandarnamn)
+      // req.session.token = token
+      // return res.status(201).send({ token })
+      const baseUrl = req.protocol + "://" + req.get("host");
+      const secretCode = Helper.createVerificationToken(req.body.email);
+
+      console.log("secret Code", secretCode);
+
+      const values = [
+        req.body.username,
+        req.body.firstname,
+        req.body.lastname,
+        req.body.email,
+        hashPassword, //hashPassword
+        secretCode
+      ]
+
+
+      try {
+        const rowsDuplicate = await db.query(removeDuplicate, [values[3]])
+        console.log("ROWSdupl", rowsDuplicate);
+        } catch (error){
+  
+        console.log("Error in register db query", error);
+        }
+  
+      try {
+        const { rows } = await db.query(createQuery, values)
+
+        try {
+
+          const mailOptions = {
+            from: 'administrator@radioskugga.org',
+            to: req.body.email,
+            subject: 'Confirm registration',
+            text: `Använd följande länk inom 10 minuter för att aktivera ditt konto på RADIOSKUGGA.org: ${baseUrl}/api/user/verification/verify-account/${secretCode}`,
+            html: `<p>Använd följande länk inom 10 minuter för att aktivera ditt konto på RADIOSKUGGA.org<strong><a href="${baseUrl}/api/user/verification/verify-account/${secretCode}" target="_blank">Bekräfta registrering</a></strong></p>`,
+          }
+    
+          await transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log("Error sending mail", error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
+    
+    
+    
+    
+        } catch (error) {
+          if (error.routine === "_bt_check_unique") {
+            return res.status(400).send({ message: "Användarnamnet är upptaget" })
+          }
+          console.log("Something failed and I don't know what!")
+          return res.status(400).send(error)
+        }
+
+        console.log("ROWS", rows);
+        } catch (error){
+  
+        console.log("Error in register db query", error);
+        }
+    
   },
   /**
    * Login
@@ -218,7 +290,54 @@ const User = {
     } catch (error) {
       return res.status(400).send(error)
     }
+  },
+
+
+
+// #route:  GET /verification/verify-account
+// #desc:   Verify user's email address
+// #access: Public
+
+  async verifyAccount(req, res) {
+
+    let decoded
+
+    try {
+      decoded = await jwt.verify(req.params.secretCode, process.env. SECRET)
+    } catch (err) {
+      return res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-jwt-fail.html")  
+        console.log(
+            "Error on /api/user/verification/verify-account: jwt verification ",
+            err
+        );
+    }
+    const updateUser = `
+      UPDATE anvandare
+      SET 
+        aktiveringskod = null,
+        status = 'member'
+      WHERE
+        aktiveringskod = $1
+      AND
+        email = $2
+    `
+    const values = [req.params.secretCode, decoded.email]
+
+    try {          
+      const rows = await db.query(updateUser, values)
+      console.log("Rows from updateUser", rows);
+        
+    } catch (err) {
+        console.log(
+            "Error on /api/auth/verification/verify-account: ",
+            err
+        );
+        return res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-success.html") 
+    } 
+    return res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-success.html")  
+ 
   }
+
 }
 
 export default User

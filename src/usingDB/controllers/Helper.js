@@ -45,6 +45,18 @@ const Helper = {
     console.log("Hello AGAIN from generatToken!")
     return token
   },
+  createVerificationToken(email) {
+    const token = jwt.sign(
+      {
+        email: email
+      },
+      process.env.SECRET,
+      { expiresIn: 1 }
+    )
+    console.log("Hello AGAIN from generatToken!")
+    return token
+  },
+
   userRelations(myUser, relations) {
     let friendsMod = []
 
