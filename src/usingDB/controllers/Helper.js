@@ -51,7 +51,7 @@ const Helper = {
         email: email
       },
       process.env.SECRET,
-      { expiresIn: 1 }
+      { expiresIn: 60 * 60 }
     )
     console.log("Hello AGAIN from generatToken!")
     return token

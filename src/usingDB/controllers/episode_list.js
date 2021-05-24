@@ -3,8 +3,8 @@ import db from "../db"
 const Episode = {
   async saveEpisode(req, res) {
     const createQuery = `
-      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, pub_datum_utc, betyg)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, betyg)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `
     let grade = req.body.grade
@@ -26,6 +26,7 @@ const Episode = {
       req.body.show_id,
       req.body.description,
       req.body.url,
+      req.body.listen_link,
       req.body.pub_date,
       grade
     ]

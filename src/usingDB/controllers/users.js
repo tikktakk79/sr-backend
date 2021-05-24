@@ -87,8 +87,8 @@ const User = {
             from: 'administrator@radioskugga.org',
             to: req.body.email,
             subject: 'Confirm registration',
-            text: `Använd följande länk inom 10 minuter för att aktivera ditt konto på RADIOSKUGGA.org: ${baseUrl}/api/user/verification/verify-account/${secretCode}`,
-            html: `<p>Använd följande länk inom 10 minuter för att aktivera ditt konto på RADIOSKUGGA.org<strong><a href="${baseUrl}/api/user/verification/verify-account/${secretCode}" target="_blank">Bekräfta registrering</a></strong></p>`,
+            text: `Använd följande länk för att aktivera ditt konto på Radioskugga: ${baseUrl}/api/user/verification/verify-account/${secretCode}`,
+            html: `<p>Använd följande länk för att aktivera ditt konto på Radioskugga: &nbsp;<strong></p><h3><a href="${baseUrl}/api/user/verification/verify-account/${secretCode}" target="_blank">Aktivera konto</a></strong></h3>`,
           }
     
           await transporter.sendMail(mailOptions, function(error, info){
@@ -96,6 +96,7 @@ const User = {
             console.log("Error sending mail", error);
             } else {
               console.log('Email sent: ' + info.response);
+              return res.status(200).send()
             }
           });
     
@@ -135,17 +136,24 @@ const User = {
       const { rows } = await db.query(text, [req.body.username])
       console.log("Queryn funkade här kommer rows", rows)
       if (!rows[0]) {
+        res.statusMessage = "No match for user in database"
         return res
           .status(400)
-          .send({ message: "Inloggningsuppgifterna du angav är felaktiga" })
+          .send()
+      } else if (rows[0].status !== "member"){
+        res.statusMessage = "User not verified"
+        return res
+        .status(400)
+        .send()
       }
       console.log("333We got to here!")
       console.log("Användarnamn stämmer")
       if (!Helper.comparePassword(rows[0].losenord, req.body.password)) {
         console.log("Compare pasword sket sig..")
+        res.statusMessage = "Current password does not match"
         return res
           .status(400)
-          .send({ message: "Inloggningsuppgifterna du angav är felaktiga" })
+          .send()
       }
 
       console.log("KOM enda hit")
