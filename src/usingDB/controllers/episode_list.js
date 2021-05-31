@@ -28,7 +28,7 @@ const Episode = {
       req.body.url,
       req.body.listen_link,
       req.body.pub_date,
-      grade
+      grade,
     ]
 
     console.log("GRADE", grade)
@@ -60,7 +60,7 @@ async gradeProgram(req, res) {
       req.user.username,
       req.body.program_id,
       req.body.program_name,
-      grade
+      grade,
     ]
 
     try {
@@ -165,6 +165,8 @@ async gradeProgram(req, res) {
     SELECT * FROM sparade_avsnitt
     WHERE
       anvandare LIKE $1
+    AND 
+      tipsare IS null
    `
     console.log("USER data:", req.user)
     console.log("RUnning get episodes in backend")
@@ -227,8 +229,70 @@ async gradeProgram(req, res) {
     } catch (error) {
       return res.status(400).send(error)
     }
+  },
 
-  }
+  async addTip(req, res) {
+    const createQuery = `
+      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *
+    `
+
+    const values = [
+      req.body.username,
+      req.body.episode_id,
+      req.body.title,
+      req.body.show_name,
+      req.body.show_id,
+      req.body.description,
+      req.body.url,
+      req.body.listen_link,
+      req.body.pub_date,
+      req.user.username,
+    ]
+
+    try {
+      const { rows } = await db.query(createQuery, values)
+      return res.status(201).send(rows[0])
+    } catch (error) {
+      console.log("Error in addTip", error)
+      return res.status(400).send(error)
+    } 
+  },
+
+  async getTips(req, res) {
+    const createQuery1 = `
+    SELECT * FROM sparade_avsnitt
+    WHERE
+      anvandare LIKE $1
+    AND 
+      tipsare IS NOT null
+   `
+
+   const createQuery2 = `
+   SELECT * FROM sparade_avsnitt
+   WHERE
+     tipsare LIKE $1
+  `
+
+    console.log("USER data:", req.user)
+    console.log("RUnning get tips in backend")
+    const values = [req.user.username]
+
+    try {
+     const {rows: tipsReceived}  = await db.query(createQuery1, values)
+     
+     const {rows: tipsSent}  = await db.query(createQuery2, values)
+
+      console.log("tipsSent inside getTips", tipsSent)
+      console.log("tipsReceived inside getTips", tipsReceived)
+
+      return res.status(200).send([tipsSent, tipsReceived])
+    } catch (error) {
+      console.log("Fel i getTips", error)
+      return res.status(400).send(error)
+    }
+  },
 }
 
 export default Episode
