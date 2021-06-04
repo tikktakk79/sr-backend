@@ -1,4 +1,5 @@
 import db from "../db"
+import helper from"./helper.js"
 
 const Episode = {
   async saveEpisode(req, res) {
@@ -224,6 +225,7 @@ async gradeProgram(req, res) {
     console.log("VAlues för grade, username och episode_id", values)
     try {
       const { rows } = await db.query(createQuery, values)
+
       console.log("Betygsatt", rows)
       return res.status(200).send(rows)
     } catch (error) {
@@ -233,8 +235,8 @@ async gradeProgram(req, res) {
 
   async addTip(req, res) {
     const createQuery = `
-      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
       RETURNING *
     `
 
@@ -249,11 +251,64 @@ async gradeProgram(req, res) {
       req.body.listen_link,
       req.body.pub_date,
       req.user.username,
+      true
     ]
 
+    const createQuery2 = 
+    `select 
+      EXTRACT(EPOCH FROM (current_timestamp - tipsad)) 
+    AS difference, email, tips_mail 
+      from anvandare
+    WHERE
+      anvandarnamn = $1
+    `
+
+    const createQuery3 = 
+    `update anvandare
+      set tipsad = current_timestamp
+      where anvandarnamn = $1
+    `
+    
+    const values2 = [req.body.username]
+
     try {
-      const { rows } = await db.query(createQuery, values)
-      return res.status(201).send(rows[0])
+      const { rows: tips } = await db.query(createQuery, values)
+      const { rows: tipTime } = await db.query(createQuery2, values2)
+
+      if (tipTime[0].tips_mail && tipTime[0].email && (!tipTime[0].difference || tipTime[0].difference > 60 * 60 * 6 )) {
+        console.log("SENDING EMAIL TIP")
+        console.log("tiptime", tipTime);
+
+        const baseUrl = req.protocol + "://" + req.get("host");
+
+        const mailOptions = {
+          from: 'administrator@radioskugga.org',
+          to: tipTime[0].email,
+          subject: 'Nya tips på Radioskugga',
+          text: `Du har fått nya lyssningstips!`,
+          html: `<h3>Du har fått nya lyssningstips! &nbsp;<strong><a href="www.radioskugga.org">Radioskugga</a></strong></h3>`,
+        }
+        await new Promise(resolve => setTimeout(async function() {
+          helper.transporter.sendMail(mailOptions, async function(error, info){
+            if (error) {
+              console.log("Error sending mail", error);
+            } else {
+              console.log('Email sent: ' + info.response);
+              console.log("Running query to set timestamp")
+
+              await db.query(createQuery3, values2)
+              return res.status(200)
+            }
+          })
+
+          resolve()
+        }, 1))
+
+      } else {
+        console.log("Tip time difference not big enough", tipTime[0].difference );
+      }
+
+      return res.status(201).send(tips[0])
     } catch (error) {
       console.log("Error in addTip", error)
       return res.status(400).send(error)
@@ -293,6 +348,39 @@ async gradeProgram(req, res) {
       return res.status(400).send(error)
     }
   },
+  async setOldTips(req, res) {
+    const createQuery = `
+      UPDATE sparade_avsnitt
+      SET
+        nytt_tips = FALSE
+      WHERE
+        anvandare = $1
+      RETURNING *
+    `
+
+    const { rows } = await db.query(createQuery, [req.user.username])
+    try {
+      return res.status(204).send(rows)
+    } catch (error) {
+      return res.status(400).send(error)
+    }
+  },
+  removeAllTips() {
+    const createQuery = `
+      DELETE FROM TABLE sparade_avsnitt
+      WHERE
+        anvandare LIKE 1
+      AND
+        tipsare IS NOT null
+    `
+
+    await db.query(createQuery, [req.user.username])
+    try {
+      return res.status(204).send()
+    } catch (error) {
+      return res.status(400).send(error)
+    }
+  }
 }
 
 export default Episode

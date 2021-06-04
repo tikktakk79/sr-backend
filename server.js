@@ -53,7 +53,9 @@ app.post("/api/program/update", Auth.verifyToken, Episode.updateProgram)
 app.post("/api/program/delete", Auth.verifyToken, Episode.deleteProgram)
 app.post("/api/episode/delete", Auth.verifyToken, Episode.deleteEpisode)
 app.post("/api/tip", Auth.verifyToken, Episode.addTip)
+app.post("/api/tip/remove-all", Auth.verifyToken, Episode.removeAllTips)
 app.get("/api/tip", Auth.verifyToken, Episode.getTips)
+app.post("/api/tip/update", Auth.verifyToken, Episode.setOldTips)
 app.post("/api/rec", Auth.verifyToken, Rec.saveRec)
 app.get("/api/rec", Auth.verifyToken, Rec.listRecs)
 app.post("/api/rec/delete", Auth.verifyToken, Rec.deleteRec)
@@ -67,6 +69,8 @@ app.post("/api/friend/program", Auth.verifyToken, Friend.program)
 app.get("/api/friend", Auth.verifyToken, Friend.listFriends)
 app.get("/api/secret", Auth.verifyToken, Friend.getSecret)
 app.post("/api/secret", Auth.verifyToken, Friend.setSecret)
+app.get("/api/tips-mail", Auth.verifyToken, Friend.getTipsMail)
+app.post("/api/tips-mail", Auth.verifyToken, Friend.setTipsMail)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {

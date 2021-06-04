@@ -2,20 +2,11 @@ import moment from "moment"
 import { v4 as uuidv4 } from "uuid"
 import db from "../db"
 import Helper from "./Helper"
-import nodemailer from "nodemailer"
 import jwt from "jsonwebtoken"
 // const cryptoRandomString =  require("crypto-random-string")
 const Str = require('@supercharge/strings')
 const dotenv = require("dotenv")
 const express = require('express');
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'stellanurbansson@gmail.com',
-    pass: process.env.EMAIL_PASSWORD // naturally, replace both with your real credentials or an application-specific password
-  }
-});
 
 dotenv.config("../../../.env")
 

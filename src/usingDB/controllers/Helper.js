@@ -1,6 +1,7 @@
 // src/usingDB/controllers/Helper.js
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import nodemailer from "nodemailer"
 
 const Helper = {
   /**
@@ -130,7 +131,16 @@ const Helper = {
     }
     console.log("FALSE DAT");
     return false
-  }
+  },
+  transporter: nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'stellanurbansson@gmail.com',
+      pass: process.env.EMAIL_PASSWORD 
+    }
+  }),
+  
 }
+
 
 export default Helper

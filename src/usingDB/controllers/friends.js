@@ -192,6 +192,45 @@ const Friend = {
     }
   },
 
+  async getTipsMail(req, res) {
+    const createQuery = `
+      SELECT tips_mail from anvandare
+      WHERE
+        anvandarnamn = $1
+    `
+
+    const { rows } = await db.query(createQuery, [req.user.username])
+    try {
+      console.log("Got tips_mail from user in db", rows)
+      return res.status(200).send(rows)
+    } catch (error) {
+      return res.status(400).send(error)
+    }
+  },
+
+  async setTipsMail(req, res) {
+    const createQuery = `UPDATE anvandare
+    SET
+      tips_mail = $2
+    WHERE
+      anvandarnamn = $1
+    RETURNING tips_mail
+    `
+
+    console.log("TipsMail from backend", req.body.tips_mail)
+
+    const { rows } = await db.query(createQuery, [
+      req.user.username,
+      req.body.tips_mail
+    ])
+    try {
+      console.log("Set tipsMail", rows)
+      return res.status(200).send(rows)
+    } catch (error) {
+      return res.status(400).send(error)
+    }
+  },
+
   async program(req, res) {
     console.log("req.body", req.body)
     let permission = await Helper.permissionFriend(db, req)
