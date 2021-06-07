@@ -365,17 +365,37 @@ async gradeProgram(req, res) {
       return res.status(400).send(error)
     }
   },
-  removeAllTips() {
+  async removeAllTips(req, res) {
     const createQuery = `
-      DELETE FROM TABLE sparade_avsnitt
+      DELETE FROM sparade_avsnitt
       WHERE
-        anvandare LIKE 1
+        anvandare LIKE $1
       AND
         tipsare IS NOT null
     `
-
-    await db.query(createQuery, [req.user.username])
+ 
     try {
+      await db.query(createQuery, [req.user.username])
+      return res.status(204).send()
+    } catch (error) {
+      return res.status(400).send(error)
+    }
+  },
+  async removeOneTip(req, res) {
+    console.log("Running removeOneTip")
+    console.log("In backend:",req.body.user, req.body.episodeId);
+    const createQuery = `
+      DELETE FROM sparade_avsnitt
+      WHERE
+        anvandare = $1
+      AND
+        tipsare = $2
+      AND
+        avsnitt = $3
+    `
+  
+    try {
+      await db.query(createQuery, [req.user.username, req.body.user, req.body.episodeId])
       return res.status(204).send()
     } catch (error) {
       return res.status(400).send(error)
