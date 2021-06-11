@@ -234,6 +234,8 @@ async gradeProgram(req, res) {
   },
 
   async addTip(req, res) {
+    console.log("req.body.username", req.body.username);
+    console.log("req.body.episode_id", req.body.episode_id);
     const createQuery = `
       INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -288,6 +290,7 @@ async gradeProgram(req, res) {
           text: `Du har fått nya lyssningstips!`,
           html: `<h3>Du har fått nya lyssningstips! &nbsp;<strong><a href="www.radioskugga.org">Radioskugga</a></strong></h3>`,
         }
+        await db.query(createQuery3, values2)
         await new Promise(resolve => setTimeout(async function() {
           helper.transporter.sendMail(mailOptions, async function(error, info){
             if (error) {
@@ -296,13 +299,13 @@ async gradeProgram(req, res) {
               console.log('Email sent: ' + info.response);
               console.log("Running query to set timestamp")
 
-              await db.query(createQuery3, values2)
+              
               return res.status(200)
             }
           })
 
           resolve()
-        }, 1))
+        }, 15 * 60 * 1000))
 
       } else {
         console.log("Tip time difference not big enough", tipTime[0].difference );
