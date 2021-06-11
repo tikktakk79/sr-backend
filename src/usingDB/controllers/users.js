@@ -1,7 +1,7 @@
 import moment from "moment"
 import { v4 as uuidv4 } from "uuid"
 import db from "../db"
-import Helper from "./Helper"
+import helper from "./helper"
 import jwt from "jsonwebtoken"
 // const cryptoRandomString =  require("crypto-random-string")
 const Str = require('@supercharge/strings')
@@ -25,7 +25,7 @@ const User = {
       return res.status(400).send({ message: "Alla fält är inte ifyllda" })
     }
 
-    const hashPassword = Helper.hashPassword(req.body.password)
+    const hashPassword = helper.hashPassword(req.body.password)
 
     const removeDuplicate = 
     `DELETE FROM anvandare
@@ -43,11 +43,11 @@ const User = {
 
     
       
-      // const token = Helper.generateToken(rows[0].anvandarnamn)
+      // const token = helper.generateToken(rows[0].anvandarnamn)
       // req.session.token = token
       // return res.status(201).send({ token })
       const baseUrl = req.protocol + "://" + req.get("host");
-      const secretCode = Helper.createVerificationToken(req.body.email);
+      const secretCode = helper.createVerificationToken(req.body.email);
 
       console.log("secret Code", secretCode);
 
@@ -139,7 +139,7 @@ const User = {
       }
       console.log("333We got to here!")
       console.log("Användarnamn stämmer")
-      if (!Helper.comparePassword(rows[0].losenord, req.body.password)) {
+      if (!helper.comparePassword(rows[0].losenord, req.body.password)) {
         console.log("Compare pasword sket sig..")
         res.statusMessage = "Current password does not match"
         return res
@@ -148,7 +148,7 @@ const User = {
       }
 
       console.log("KOM enda hit")
-      const token = Helper.generateToken(rows[0].anvandarnamn)
+      const token = helper.generateToken(rows[0].anvandarnamn)
       return res.status(200).send({ token })
     } catch (error) {
       return res.status(400).send(error)
@@ -217,7 +217,7 @@ const User = {
       }
       console.log("333We got to here!")
 
-      if (!Helper.comparePassword(rows[0].losenord, req.body.password)) {
+      if (!helper.comparePassword(rows[0].losenord, req.body.password)) {
         console.log("Compare pasword sket sig..")
         return res
           .status(400)
@@ -230,7 +230,7 @@ const User = {
           SET losenord = $1
           WHERE anvandarnamn=$2`
 
-      const hashPassword = Helper.hashPassword(req.body.newPassword)
+      const hashPassword = helper.hashPassword(req.body.newPassword)
       try {
         await db.query(passwordQuery, [
           hashPassword, req.user.username

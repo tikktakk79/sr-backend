@@ -1,6 +1,6 @@
 import db from "../db"
 import Episode from "./episode_list"
-import Helper from "./helper.js"
+import helper from "./helper.js"
 
 const Friend = {
   async addFriend(req, res) {
@@ -46,7 +46,7 @@ const Friend = {
 
     try {
       const { rows, rowCount } = await db.query(createQuery, values)
-      let friendsMod = Helper.userRelations(req.user.username, rows)
+      let friendsMod = helper.userRelations(req.user.username, rows)
       return res.status(200).send(friendsMod)
     } catch (error) {
       return res.status(400).send(error)
@@ -103,7 +103,7 @@ const Friend = {
       const { rows, rowCount } = await db.query(createQuery, values)
 
       console.log("RÖUUWS", rows)
-      let friendsMod = Helper.userRelations(req.user.username, rows)
+      let friendsMod = helper.userRelations(req.user.username, rows)
       return res.status(200).send({ friendsMod, rowCount })
     } catch (error) {
       return res.status(400).send(error)
@@ -233,7 +233,7 @@ const Friend = {
 
   async program(req, res) {
     console.log("req.body", req.body)
-    let permission = await Helper.permissionFriend(db, req)
+    let permission = await helper.permissionFriend(db, req)
 
     if (!permission ) {
       return res.status(400)
@@ -250,7 +250,7 @@ const Friend = {
 
   async episode(req, res) {
     console.log("req.body", req.body)
-    let permission = await Helper.permissionFriend(db, req)
+    let permission = await helper.permissionFriend(db, req)
 
     ;
     if (!permission ) {
