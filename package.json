@@ -9,7 +9,7 @@
     "build-babel": "babel server.js .env src -d build",
     "build": "npm run clean && npm run build-babel && cp .env ./build",
     "start": "node ./build/server.js",
-    "heroku-postbuild": "node server.js",
+    "heroku-postbuild": "npm run start",
     "dev-start": "export NODE_ENV=dev && babel-watch server.js"
   },
   "author": "",
