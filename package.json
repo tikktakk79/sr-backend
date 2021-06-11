@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "Login with JWT",
   "main": "index.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel server.js .env src -d build",
     "build": "npm run clean && npm run build-babel && cp .env ./build",
     "start": "node ./build/server.js",
-    "heroku-postbuild": "npm run start",
+    "heroku-postbuild": "npm run clean && npm run build-babel",
     "dev-start": "export NODE_ENV=dev && babel-watch server.js"
   },
   "author": "",
