@@ -21,6 +21,7 @@
   "dependencies": {
     "@supercharge/strings": "^1.18.0",
     "babel-loader": "^8.0.0-beta.6",
+    "@babel/core": "^7.14.3",
     "bcrypt": "^5.0.0",
     "core-js": "^3.14.0",
     "cors": "^2.8.5",
@@ -37,7 +38,6 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.14.3",
     "@babel/node": "^7.14.2",
     "@babel/preset-env": "^7.0.0",
     "babel-watch": "^7.0.0",
