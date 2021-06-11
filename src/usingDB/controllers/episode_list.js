@@ -1,5 +1,4 @@
 import db from "../db"
-import kuk from "./kuk.js"
 import helper from "./helper.js"
 
 const Episode = {
