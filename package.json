@@ -8,8 +8,8 @@
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel server.js .env src -d build",
     "build": "npm run clean && npm run build-babel && cp .env ./build",
-    "start": "node server.js",
-    "heroku-postbuild": "echo skip build on heroku",
+    "start": "node ./build/server.js",
+    "heroku-postbuild": "node server.js",
     "dev-start": "export NODE_ENV=dev && babel-watch server.js"
   },
   "author": "",
