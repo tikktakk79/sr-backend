@@ -9,7 +9,7 @@ var _db = _interopRequireDefault(require("../db"));
 
 var _episode_list = _interopRequireDefault(require("./episode_list"));
 
-var _Helper = _interopRequireDefault(require("./Helper.js"));
+var _helper = _interopRequireDefault(require("./helper.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -81,7 +81,7 @@ var Friend = {
               _yield$db$query2 = _context2.sent;
               rows = _yield$db$query2.rows;
               rowCount = _yield$db$query2.rowCount;
-              friendsMod = _Helper["default"].userRelations(req.user.username, rows);
+              friendsMod = _helper["default"].userRelations(req.user.username, rows);
               return _context2.abrupt("return", res.status(200).send(friendsMod));
 
             case 12:
@@ -151,7 +151,7 @@ var Friend = {
               rows = _yield$db$query4.rows;
               rowCount = _yield$db$query4.rowCount;
               console.log("RÖUUWS", rows);
-              friendsMod = _Helper["default"].userRelations(req.user.username, rows);
+              friendsMod = _helper["default"].userRelations(req.user.username, rows);
               return _context4.abrupt("return", res.status(200).send({
                 friendsMod: friendsMod,
                 rowCount: rowCount
@@ -385,7 +385,7 @@ var Friend = {
             case 0:
               console.log("req.body", req.body);
               _context11.next = 3;
-              return _Helper["default"].permissionFriend(_db["default"], req);
+              return _helper["default"].permissionFriend(_db["default"], req);
 
             case 3:
               permission = _context11.sent;
@@ -421,7 +421,7 @@ var Friend = {
             case 0:
               console.log("req.body", req.body);
               _context12.next = 3;
-              return _Helper["default"].permissionFriend(_db["default"], req);
+              return _helper["default"].permissionFriend(_db["default"], req);
 
             case 3:
               permission = _context12.sent;

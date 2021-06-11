@@ -1,6 +1,6 @@
 import db from "../db"
 import Episode from "./episode_list"
-import Helper from "./Helper.js"
+import Helper from "./helper.js"
 
 const Friend = {
   async addFriend(req, res) {
