@@ -1,7 +1,7 @@
 import moment from "moment"
 import { v4 as uuidv4 } from "uuid"
 import db from "../db"
-import helper from "./helper"
+import helper from "./helper.js"
 import jwt from "jsonwebtoken"
 // const cryptoRandomString =  require("crypto-random-string")
 const Str = require('@supercharge/strings')
