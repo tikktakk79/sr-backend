@@ -15,7 +15,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 _dotenv["default"].config();
 
 var pool = new _pg.Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 pool.on("connect", function () {
   console.log("connected to the db");
