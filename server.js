@@ -20,7 +20,7 @@ const Friend = FriendWithDb
 const app = express()
 
 var corsOptions = {
-  origin: ["http://localhost:8080","http://localhost:5000","https://sr-finder-frontend.herokuapp.com/"]
+  origin: ["http://localhost:8080","http://localhost:5000","https://sr-finder-frontend.herokuapp.com"]
 }
 
 app.use(express.json())
