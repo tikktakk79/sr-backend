@@ -4,12 +4,17 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
+let poolObject = {
+  connectionString: process.env.DATABASE_URL
+}
+
+if (process.env.DATABASE_URL.slice(0,4) !== "post") {
+  poolObject.ssl = {
     rejectUnauthorized: false
   }
-})
+}
+
+const pool = new Pool(poolObject)
 
 pool.on("connect", () => {
   console.log("connected to the db")

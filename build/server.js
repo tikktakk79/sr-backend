@@ -31,7 +31,7 @@ var Rec = _recommendations["default"];
 var Friend = _friends["default"];
 var app = (0, _express["default"])();
 var corsOptions = {
-  origin: "http://localhost:8080"
+  origin: ["http://localhost:8080", "http://localhost:5000"]
 };
 app.use(_express["default"].json());
 app.use(cors(corsOptions));
