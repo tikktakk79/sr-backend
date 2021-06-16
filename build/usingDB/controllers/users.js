@@ -11,7 +11,7 @@ var _uuid = require("uuid");
 
 var _db = _interopRequireDefault(require("../db"));
 
-var _Helper = _interopRequireDefault(require("./Helper"));
+var _helper = _interopRequireDefault(require("./helper.js"));
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
@@ -57,14 +57,14 @@ var User = {
               }));
 
             case 3:
-              hashPassword = _Helper["default"].hashPassword(req.body.password);
+              hashPassword = _helper["default"].hashPassword(req.body.password);
               removeDuplicate = "DELETE FROM anvandare\n      WHERE\n        status = 'pending'\n      AND\n        email = $1\n    ";
-              createQuery = "INSERT INTO\n      anvandare (anvandarnamn, fornamn, efternamn, email, losenord, aktiveringskod)\n      VALUES ($1, $2, $3, $4, $5, $6)\n      returning *"; // const token = Helper.generateToken(rows[0].anvandarnamn)
+              createQuery = "INSERT INTO\n      anvandare (anvandarnamn, fornamn, efternamn, email, losenord, aktiveringskod)\n      VALUES ($1, $2, $3, $4, $5, $6)\n      returning *"; // const token = helper.generateToken(rows[0].anvandarnamn)
               // req.session.token = token
               // return res.status(201).send({ token })
 
               baseUrl = req.protocol + "://" + req.get("host");
-              secretCode = _Helper["default"].createVerificationToken(req.body.email);
+              secretCode = _helper["default"].createVerificationToken(req.body.email);
               console.log("secret Code", secretCode);
               values = [req.body.username, req.body.firstname, req.body.lastname, req.body.email, hashPassword, //hashPassword
               secretCode];
@@ -208,7 +208,7 @@ var User = {
               console.log("333We got to here!");
               console.log("Användarnamn stämmer");
 
-              if (_Helper["default"].comparePassword(rows[0].losenord, req.body.password)) {
+              if (_helper["default"].comparePassword(rows[0].losenord, req.body.password)) {
                 _context2.next = 26;
                 break;
               }
@@ -219,7 +219,7 @@ var User = {
 
             case 26:
               console.log("KOM enda hit");
-              token = _Helper["default"].generateToken(rows[0].anvandarnamn);
+              token = _helper["default"].generateToken(rows[0].anvandarnamn);
               return _context2.abrupt("return", res.status(200).send({
                 token: token
               }));
@@ -360,7 +360,7 @@ var User = {
             case 13:
               console.log("333We got to here!");
 
-              if (_Helper["default"].comparePassword(rows[0].losenord, req.body.password)) {
+              if (_helper["default"].comparePassword(rows[0].losenord, req.body.password)) {
                 _context5.next = 17;
                 break;
               }
@@ -373,7 +373,7 @@ var User = {
             case 17:
               console.log("KOM enda hit, lösenordet stämmer");
               passwordQuery = "UPDATE anvandare\n          SET losenord = $1\n          WHERE anvandarnamn=$2";
-              hashPassword = _Helper["default"].hashPassword(req.body.newPassword);
+              hashPassword = _helper["default"].hashPassword(req.body.newPassword);
               _context5.prev = 20;
               _context5.next = 23;
               return _db["default"].query(passwordQuery, [hashPassword, req.user.username]);
