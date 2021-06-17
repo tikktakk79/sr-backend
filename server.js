@@ -73,7 +73,6 @@ app.post("/api/secret", Auth.verifyToken, Friend.setSecret)
 app.get("/api/tips-mail", Auth.verifyToken, Friend.getTipsMail)
 app.post("/api/tips-mail", Auth.verifyToken, Friend.setTipsMail)
 
-console.log("Process env password", process.env.EMAIL_PASSWORD);
 
 
 const PORT = process.env.PORT || 3000
