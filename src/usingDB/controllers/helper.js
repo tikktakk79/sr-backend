@@ -135,7 +135,7 @@ const Helper = {
   transporter: nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'stellanurbansson@gmail.com',
+      user: process.env.EMAIL_ADDRESS,
       pass: process.env.EMAIL_PASSWORD 
     }
   }),
