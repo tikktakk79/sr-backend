@@ -85,22 +85,25 @@ var User = {
 
             case 20:
               _context.prev = 20;
-              _context.next = 23;
+              console.log("Before create query in db");
+              _context.next = 24;
               return _db["default"].query(createQuery, values);
 
-            case 23:
+            case 24:
               _yield$db$query = _context.sent;
               rows = _yield$db$query.rows;
-              _context.prev = 25;
+              console.log("After create query");
+              _context.prev = 27;
               _mailOptions = {
-                from: 'administrator@radioskugga.org',
+                from: process.env.EMAIL_ADDRESS,
                 to: req.body.email,
                 subject: 'Confirm registration',
                 text: "Anv\xE4nd f\xF6ljande l\xE4nk f\xF6r att aktivera ditt konto p\xE5 Radioskugga: ".concat(baseUrl, "/api/user/verification/verify-account/").concat(secretCode),
                 html: "<p>Anv\xE4nd f\xF6ljande l\xE4nk f\xF6r att aktivera ditt konto p\xE5 Radioskugga: &nbsp;<strong></p><h3><a href=\"".concat(baseUrl, "/api/user/verification/verify-account/").concat(secretCode, "\" target=\"_blank\">Aktivera konto</a></strong></h3>")
               };
-              _context.next = 29;
-              return transporter.sendMail(_mailOptions, function (error, info) {
+              console.log("Trying to send email");
+              _context.next = 32;
+              return _helper["default"].transporter.sendMail(_mailOptions, function (error, info) {
                 if (error) {
                   console.log("Error sending mail", error);
                 } else {
@@ -109,43 +112,46 @@ var User = {
                 }
               });
 
-            case 29:
-              _context.next = 37;
+            case 32:
+              console.log("Mail sent");
+              console.log("ROWS", rows);
+              _context.next = 39;
               break;
 
-            case 31:
-              _context.prev = 31;
-              _context.t1 = _context["catch"](25);
+            case 36:
+              _context.prev = 36;
+              _context.t1 = _context["catch"](27);
+              console.log("Error in register db query", _context.t1);
 
-              if (!(_context.t1.routine === "_bt_check_unique")) {
-                _context.next = 35;
+            case 39:
+              _context.next = 49;
+              break;
+
+            case 41:
+              _context.prev = 41;
+              _context.t2 = _context["catch"](20);
+              console.log("rror routine", _context.t2.routine);
+              console.log("Användarnamnet är upptaget");
+
+              if (!(_context.t2.routine === "_bt_check_unique")) {
+                _context.next = 47;
                 break;
               }
 
               return _context.abrupt("return", res.status(400).send({
-                message: "Användarnamnet är upptaget"
+                message: "Username taken"
               }));
 
-            case 35:
+            case 47:
               console.log("Something failed and I don't know what!");
-              return _context.abrupt("return", res.status(400).send(_context.t1));
+              return _context.abrupt("return", res.status(400).send(_context.t2));
 
-            case 37:
-              console.log("ROWS", rows);
-              _context.next = 43;
-              break;
-
-            case 40:
-              _context.prev = 40;
-              _context.t2 = _context["catch"](20);
-              console.log("Error in register db query", _context.t2);
-
-            case 43:
+            case 49:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[10, 17], [20, 40], [25, 31]]);
+      }, _callee, null, [[10, 17], [20, 41], [27, 36]]);
     }))();
   },
 

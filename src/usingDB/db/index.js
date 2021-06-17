@@ -8,7 +8,7 @@ let poolObject = {
   connectionString: process.env.DATABASE_URL
 }
 
-if (process.env.DATABASE_URL.slice(0,4) === "post") {
+if (!process.env.DATABASE_URL.includes("localhost")) {
   poolObject.ssl = {
     rejectUnauthorized: false
   }
