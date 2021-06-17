@@ -70,19 +70,21 @@ const User = {
         }
   
       try {
+        console.log("Before create query in db")
         const { rows } = await db.query(createQuery, values)
+        console.log("After create query")
 
         try {
-
+          
           const mailOptions = {
-            from: 'administrator@radioskugga.org',
+            from: process.env.EMAIL_ADDRESS,
             to: req.body.email,
             subject: 'Confirm registration',
             text: `Använd följande länk för att aktivera ditt konto på Radioskugga: ${baseUrl}/api/user/verification/verify-account/${secretCode}`,
             html: `<p>Använd följande länk för att aktivera ditt konto på Radioskugga: &nbsp;<strong></p><h3><a href="${baseUrl}/api/user/verification/verify-account/${secretCode}" target="_blank">Aktivera konto</a></strong></h3>`,
           }
-    
-          await transporter.sendMail(mailOptions, function(error, info){
+          console.log("Trying to send email")
+          await helper.transporter.sendMail(mailOptions, function(error, info){
             if (error) {
             console.log("Error sending mail", error);
             } else {
@@ -90,23 +92,27 @@ const User = {
               return res.status(200).send()
             }
           });
+          console.log("Mail sent");
     
     
     
     
-        } catch (error) {
-          if (error.routine === "_bt_check_unique") {
-            return res.status(400).send({ message: "Användarnamnet är upptaget" })
-          }
-          console.log("Something failed and I don't know what!")
-          return res.status(400).send(error)
-        }
+        
 
         console.log("ROWS", rows);
         } catch (error){
   
         console.log("Error in register db query", error);
         }
+      } catch (error) {
+        console.log("rror routine", error.routine);
+        console.log("Användarnamnet är upptaget");
+        if (error.routine === "_bt_check_unique") {
+          return res.status(400).send({message: "Username taken"})
+        }
+        console.log("Something failed and I don't know what!")
+        return res.status(400).send(error)
+      }
     
   },
   /**
