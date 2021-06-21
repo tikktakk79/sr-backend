@@ -19,8 +19,18 @@ const Rec = RecWithDb
 const Friend = FriendWithDb
 const app = express()
 
-var corsOptions = {
-  origin: ["http://localhost:8080","http://localhost:5000","https://sr-finder-frontend.herokuapp.com"]
+let allowed
+
+if (process.env.DATABASE_URL.includes("localhost")) {
+  allowed = 
+  ["http://localhost:8080","http://localhost:5000"]
+} else {
+  allowed = ["https://sr-finder-frontend.herokuapp.com", "http://localhost:5000","https://sr-frontend-vue.herokuapp.com"]
+}
+  
+
+let corsOptions = {
+  origin: allowed
 }
 
 app.use(express.json())
