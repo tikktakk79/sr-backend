@@ -30,8 +30,16 @@ var Episode = _episode_list["default"];
 var Rec = _recommendations["default"];
 var Friend = _friends["default"];
 var app = (0, _express["default"])();
+var allowed;
+
+if (process.env.DATABASE_URL.includes("localhost")) {
+  allowed = ["http://localhost:8080", "http://localhost:5000"];
+} else {
+  allowed = ["https://sr-finder-frontend.herokuapp.com", "https://radioskugga.herokuapp.com", "https://sr-frontend-vue.herokuapp.com"];
+}
+
 var corsOptions = {
-  origin: ["http://localhost:8080", "http://localhost:5000", "https://sr-finder-frontend.herokuapp.com"]
+  origin: allowed
 };
 app.use(_express["default"].json());
 app.use(cors(corsOptions));
