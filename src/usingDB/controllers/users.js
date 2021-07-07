@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken"
 const Str = require('@supercharge/strings')
 const dotenv = require("dotenv")
 const express = require('express');
+var path = require('path');
 
 dotenv.config("../../../.env")
 
@@ -310,11 +311,13 @@ const User = {
     try {
       decoded = await jwt.verify(req.params.secretCode, process.env. SECRET)
     } catch (err) {
-      return res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-jwt-fail.html")  
-        console.log(
-            "Error on /api/user/verification/verify-account: jwt verification ",
-            err
-        );
+      console.log(
+        "Error on /api/user/verification/verify-account: jwt verification ",
+        err
+    )
+
+      return res.sendFile("verification-jwt-fail.html", { root: path.join(__dirname, '../../../public') })  
+
     }
     const updateUser = `
       UPDATE anvandare
@@ -337,9 +340,12 @@ const User = {
             "Error on /api/auth/verification/verify-account: ",
             err
         );
-        return res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-success.html") 
+        
+        
+        return res.sendFile("verification-db-fail.html", { root: path.join(__dirname, '../../../public') }) 
     } 
-    return res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-success.html")  
+    console.log("Verification success")
+    res.sendFile("verification-success.html", { root: path.join(__dirname, '../../../public') }) 
  
   }
 
