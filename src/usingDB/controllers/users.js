@@ -47,7 +47,7 @@ const User = {
       // const token = helper.generateToken(rows[0].anvandarnamn)
       // req.session.token = token
       // return res.status(201).send({ token })
-      const baseUrl = req.protocol + "://" + req.get("host");
+      const baseUrl = "https://" + req.get("host");
       const secretCode = helper.createVerificationToken(req.body.email);
 
       console.log("secret Code", secretCode);
