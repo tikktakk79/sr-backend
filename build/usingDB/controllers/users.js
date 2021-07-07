@@ -28,6 +28,8 @@ var dotenv = require("dotenv");
 
 var express = require('express');
 
+var path = require('path');
+
 dotenv.config("../../../.env");
 var rand, mailOptions, host, link;
 var User = {
@@ -503,42 +505,48 @@ var User = {
 
             case 3:
               decoded = _context8.sent;
-              _context8.next = 10;
+              _context8.next = 11;
               break;
 
             case 6:
               _context8.prev = 6;
               _context8.t0 = _context8["catch"](0);
-              return _context8.abrupt("return", res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-jwt-fail.html"));
+              console.log("verification error");
+              return _context8.abrupt("return", res.sendFile("./public/verification-jwt-fail.html"));
 
-            case 10:
+            case 11:
               updateUser = "\n      UPDATE anvandare\n      SET \n        aktiveringskod = null,\n        status = 'member'\n      WHERE\n        aktiveringskod = $1\n      AND\n        email = $2\n    ";
               values = [req.params.secretCode, decoded.email];
-              _context8.prev = 12;
-              _context8.next = 15;
+              _context8.prev = 13;
+              _context8.next = 16;
               return _db["default"].query(updateUser, values);
 
-            case 15:
+            case 16:
               rows = _context8.sent;
               console.log("Rows from updateUser", rows);
-              _context8.next = 23;
+              _context8.next = 24;
               break;
 
-            case 19:
-              _context8.prev = 19;
-              _context8.t1 = _context8["catch"](12);
+            case 20:
+              _context8.prev = 20;
+              _context8.t1 = _context8["catch"](13);
               console.log("Error on /api/auth/verification/verify-account: ", _context8.t1);
-              return _context8.abrupt("return", res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-success.html"));
-
-            case 23:
-              return _context8.abrupt("return", res.sendFile("/Users/msberg/Vue/sr-backend/public/verification-success.html"));
+              return _context8.abrupt("return", res.sendFile("verification-db-fail.html", {
+                root: path.join(__dirname, '../../../public')
+              }));
 
             case 24:
+              console.log("Verification success");
+              res.sendFile("verification-success.html", {
+                root: path.join(__dirname, '../../../public')
+              });
+
+            case 26:
             case "end":
               return _context8.stop();
           }
         }
-      }, _callee8, null, [[0, 6], [12, 19]]);
+      }, _callee8, null, [[0, 6], [13, 20]]);
     }))();
   }
 };
