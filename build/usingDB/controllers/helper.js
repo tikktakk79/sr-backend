@@ -163,7 +163,10 @@ var Helper = {
     }))();
   },
   transporter: _nodemailer["default"].createTransport({
-    service: 'gmail',
+    pool: true,
+    host: "ns10.inleed.net",
+    port: 465,
+    secure: true,
     auth: {
       user: process.env.EMAIL_ADDRESS,
       pass: process.env.EMAIL_PASSWORD
