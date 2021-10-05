@@ -65,7 +65,7 @@ var User = {
               // req.session.token = token
               // return res.status(201).send({ token })
 
-              baseUrl = req.protocol + "://" + req.get("host");
+              baseUrl = "https://" + req.get("host");
               secretCode = _helper["default"].createVerificationToken(req.body.email);
               console.log("secret Code", secretCode);
               values = [req.body.username, req.body.firstname, req.body.lastname, req.body.email, hashPassword, //hashPassword
@@ -505,48 +505,50 @@ var User = {
 
             case 3:
               decoded = _context8.sent;
-              _context8.next = 11;
+              _context8.next = 10;
               break;
 
             case 6:
               _context8.prev = 6;
               _context8.t0 = _context8["catch"](0);
-              console.log("verification error");
-              return _context8.abrupt("return", res.sendFile("./public/verification-jwt-fail.html"));
+              console.log("Error on /api/user/verification/verify-account: jwt verification ", _context8.t0);
+              return _context8.abrupt("return", res.sendFile("verification-jwt-fail.html", {
+                root: path.join(__dirname, '../../../public')
+              }));
 
-            case 11:
+            case 10:
               updateUser = "\n      UPDATE anvandare\n      SET \n        aktiveringskod = null,\n        status = 'member'\n      WHERE\n        aktiveringskod = $1\n      AND\n        email = $2\n    ";
               values = [req.params.secretCode, decoded.email];
-              _context8.prev = 13;
-              _context8.next = 16;
+              _context8.prev = 12;
+              _context8.next = 15;
               return _db["default"].query(updateUser, values);
 
-            case 16:
+            case 15:
               rows = _context8.sent;
               console.log("Rows from updateUser", rows);
-              _context8.next = 24;
+              _context8.next = 23;
               break;
 
-            case 20:
-              _context8.prev = 20;
-              _context8.t1 = _context8["catch"](13);
+            case 19:
+              _context8.prev = 19;
+              _context8.t1 = _context8["catch"](12);
               console.log("Error on /api/auth/verification/verify-account: ", _context8.t1);
               return _context8.abrupt("return", res.sendFile("verification-db-fail.html", {
                 root: path.join(__dirname, '../../../public')
               }));
 
-            case 24:
+            case 23:
               console.log("Verification success");
               res.sendFile("verification-success.html", {
                 root: path.join(__dirname, '../../../public')
               });
 
-            case 26:
+            case 25:
             case "end":
               return _context8.stop();
           }
         }
-      }, _callee8, null, [[0, 6], [13, 20]]);
+      }, _callee8, null, [[0, 6], [12, 19]]);
     }))();
   }
 };
