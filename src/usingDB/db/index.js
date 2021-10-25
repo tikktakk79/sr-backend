@@ -33,8 +33,6 @@ export default {
         .query(text, params)
         .then((res) => {
           console.log("Tror det gick vägen nu uppd*");
-          console.log("mailadress", process.env.EMAIL_ADDRESS)
-          console.log("Mail password", process.env.EMAIL_PASSWORD)
           resolve(res)
         })
         .catch((err) => {
