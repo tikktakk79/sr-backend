@@ -22,6 +22,33 @@ var _checkAuthWhilePending = _interopRequireDefault(require("./usingDB/middlewar
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    //
+    // - Write all logs with level `error` and below to `error.log`
+    // - Write all logs with level `info` and below to `combined.log`
+    //
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
+
+//
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple(),
+  }));
+}
+
+
 //import "babel-polyfill"
 var cors = require("cors");
 
@@ -35,7 +62,7 @@ var allowed;
 if (process.env.DATABASE_URL.includes("localhost")) {
   allowed = ["http://localhost:8080", "http://localhost:5000"];
 } else {
-  allowed = ["https://sr-finder-frontend.herokuapp.com", "https://radioskugga.herokuapp.com", "https://sr-frontend-vue.herokuapp.com"];
+  allowed = ["https://sr-finder-frontend.herokuapp.com", "https://radioskugga.herokuapp.com", "https://sr-frontend-vue.herokuapp.com", "https://www.sjoburger.com"];
 }
 
 var corsOptions = {
