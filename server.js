@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+//added test comment
 // server.js
 import express from "express"
 //import "babel-polyfill"
@@ -62,7 +63,7 @@ let corsOptions = {
 }
 
 app.use(express.json())
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions))
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"))
@@ -116,4 +117,5 @@ app.post("/api/tips-mail", Auth.verifyToken, Friend.setTipsMail)
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Our app is running on port ${PORT}`)
+  logger.info("App is up and running")
 })

@@ -30,6 +30,36 @@ var Episode = _episode_list["default"];
 var Rec = _recommendations["default"];
 var Friend = _friends["default"];
 var app = (0, _express["default"])();
+
+var winston = require('winston');
+
+var logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: {
+    service: 'user-service'
+  },
+  transports: [//
+  // - Write all logs with level `error` and below to `error.log`
+  // - Write all logs with level `info` and below to `combined.log`
+  //
+  new winston.transports.File({
+    filename: 'error.log',
+    level: 'error'
+  }), new winston.transports.File({
+    filename: 'combined.log'
+  })]
+}); //
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
+
 var allowed;
 
 if (process.env.DATABASE_URL.includes("localhost")) {
@@ -41,8 +71,7 @@ if (process.env.DATABASE_URL.includes("localhost")) {
 var corsOptions = {
   origin: allowed
 };
-app.use(_express["default"].json());
-app.use(cors(corsOptions));
+app.use(_express["default"].json()); // app.use(cors(corsOptions))
 
 if (process.env.NODE_ENV === "production") {
   app.use(_express["default"]["static"]("client/build"));
@@ -92,4 +121,5 @@ app.post("/api/tips-mail", _Auth["default"].verifyToken, Friend.setTipsMail);
 var PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
   console.log("Our app is running on port ".concat(PORT));
+  logger.info("App is up and running");
 });
