@@ -1,5 +1,5 @@
 // src/usingDB/models/index.js
-import { Pool } from "pg"
+import mysql from "mysql2"
 import dotenv from "dotenv"
 
 dotenv.config()
@@ -14,9 +14,14 @@ if (!process.env.DATABASE_URL.includes("localhost")) {
   }
 }
 
-const pool = new Pool(poolObject)
+const pool = mysql.createPool({
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DB
+})
 
-pool.on("connect", () => {
+pool.on("connection", () => {
   console.log("connected to the db")
 })
 
@@ -29,15 +34,23 @@ export default {
    */
   query(text, params) {
     return new Promise((resolve, reject) => {
-      pool
-        .query(text, params)
-        .then((res) => {
-          console.log("Tror det gick vägen nu uppd*");
-          resolve(res)
-        })
-        .catch((err) => {
-          reject(err)
-        })
+      pool.getConnection((err, conn) => {
+        if (err) {
+          console.log('query connec error!', err);
+          // resolve(err);
+        } else {
+          conn.query(text, params, (err, rows) => {
+            if (err) {
+              console.log("Query failed", err)
+              reject (err)
+            } else {
+              console.log("Query worked")
+              resolve(rows)
+            }
+            conn.release
+          })
+        }
+      })
     })
   }
 }

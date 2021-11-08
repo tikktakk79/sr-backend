@@ -32,8 +32,8 @@ var Friend = {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              createQuery = "\n      CALL ny_van($1, $2);\n    ";
-              createQuery2 = "\n      SELECT * FROM vanner WHERE \n        anvandare1 = LEAST($1, $2)\n      AND\n        anvandare2 = GREATEST($1, $2)\n      ;\n    ";
+              createQuery = "\n      CALL ny_van(?, ?);\n    ";
+              createQuery2 = "\n      SELECT * FROM vanner WHERE \n        anvandare1 = LEAST(?, ?)\n      AND\n        anvandare2 = GREATEST(?, ?)\n      ;\n    ";
               values = [req.user.username, req.body.receiver];
               _context.prev = 3;
               _context.next = 6;
@@ -71,7 +71,7 @@ var Friend = {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              createQuery = "\n      UPDATE vanner\n      SET godkann = null,\n      ny_fraga = FALSE\n      WHERE anvandare1 = $2\n        OR anvandare2 = $2\n        AND godkann = $1\n      RETURNING *\n    ";
+              createQuery = "\n      UPDATE vanner\n      SET godkann = null,\n      ny_fraga = FALSE\n      WHERE anvandare1 = ?\n        OR anvandare2 = ?\n        AND godkann = ?\n      RETURNING *\n    ";
               values = [req.user.username, req.body.receiver];
               _context2.prev = 2;
               _context2.next = 5;
@@ -105,7 +105,7 @@ var Friend = {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              createQuery = "\n      UPDATE vanner\n      SET ny_fraga = FALSE\n      WHERE anvandare1 = $2\n        OR anvandare2 = $2\n        AND godkann = $1\n      RETURNING *\n    ";
+              createQuery = "\n      UPDATE vanner\n      SET ny_fraga = FALSE\n      WHERE anvandare1 = ?\n        OR anvandare2 = ?\n        AND godkann = ?\n      RETURNING *\n    ";
               values = [req.user.username, req.body.receiver];
               _context3.prev = 2;
               _context3.next = 5;
@@ -139,7 +139,7 @@ var Friend = {
           switch (_context4.prev = _context4.next) {
             case 0:
               console.log("Running list friends from backend");
-              createQuery = "\n    SELECT\n      id, vanner.anvandare1, vanner.anvandare2, vanner.godkann, vanner.ny_fraga, anv1.fornamn AS fnamn1, anv1.efternamn AS enamn1, anv1.email AS email1, anv1.hemligt AS hemligt1, anv2.fornamn AS fnamn2, anv2.efternamn AS enamn2, anv2.email AS email2, anv2.hemligt AS hemligt2\n    FROM\n      vanner\n    JOIN\n      anvandare AS anv1\n    ON\n      anvandare1 = anvandarnamn\n    JOIN\n      anvandare AS anv2\n    ON\n      anvandare2 = anv2.anvandarnamn\n    WHERE\n      anv1.anvandarnamn = $1\n    OR\n      anv2.anvandarnamn = $1\n    ;\n\n    ";
+              createQuery = "\n    SELECT\n      id, vanner.anvandare1, vanner.anvandare2, vanner.godkann, vanner.ny_fraga, anv1.fornamn AS fnamn1, anv1.efternamn AS enamn1, anv1.email AS email1, anv1.hemligt AS hemligt1, anv2.fornamn AS fnamn2, anv2.efternamn AS enamn2, anv2.email AS email2, anv2.hemligt AS hemligt2\n    FROM\n      vanner\n    JOIN\n      anvandare AS anv1\n    ON\n      anvandare1 = anvandarnamn\n    JOIN\n      anvandare AS anv2\n    ON\n      anvandare2 = anv2.anvandarnamn\n    WHERE\n      anv1.anvandarnamn = ?\n    OR\n      anv2.anvandarnamn = ?\n    ;\n\n    ";
               console.log("Önska mig lycka till innan jag försöker lista vännerna!");
               values = [req.user.username];
               _context4.prev = 4;
@@ -179,7 +179,7 @@ var Friend = {
           switch (_context5.prev = _context5.next) {
             case 0:
               console.log("Running delete friend on backend");
-              deleteQuery = "\n      DELETE FROM vanner\n        WHERE\n          anvandare1 LIKE LEAST($1, $2)\n        AND\n          anvandare2 LIKE GREATEST($1, $2)\n        RETURNING *\n        ;\n      ";
+              deleteQuery = "\n      DELETE FROM vanner\n        WHERE\n          anvandare1 LIKE LEAST(?, ?)\n        AND\n          anvandare2 LIKE GREATEST(?, ?)\n        RETURNING *\n        ;\n      ";
               _context5.prev = 2;
               console.log("Mu uname", req.user.username);
               console.log("Other uname", req.body.receiver);
@@ -223,7 +223,7 @@ var Friend = {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              createQuery = "\n      UPDATE vanner\n      SET\n        ny_fraga = FALSE\n      WHERE\n        godkann = $1\n      RETURNING *\n    ";
+              createQuery = "\n      UPDATE vanner\n      SET\n        ny_fraga = FALSE\n      WHERE\n        godkann = ?\n      RETURNING *\n    ";
               _context6.next = 3;
               return _db["default"].query(createQuery, [req.user.username]);
 
@@ -254,7 +254,7 @@ var Friend = {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
-              createQuery = "\n      SELECT hemligt from anvandare\n      WHERE\n        anvandarnamn = $1\n    ";
+              createQuery = "\n      SELECT hemligt from anvandare\n      WHERE\n        anvandarnamn = ?\n    ";
               _context7.next = 3;
               return _db["default"].query(createQuery, [req.user.username]);
 
@@ -286,7 +286,7 @@ var Friend = {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
-              createQuery = "UPDATE anvandare\n    SET\n      hemligt = $2\n    WHERE\n      anvandarnamn = $1\n    RETURNING hemligt\n    ";
+              createQuery = "UPDATE anvandare\n    SET\n      hemligt = ?\n    WHERE\n      anvandarnamn = ?\n    RETURNING hemligt\n    ";
               console.log("SECRET from backend", req.body.secret);
               _context8.next = 4;
               return _db["default"].query(createQuery, [req.user.username, req.body.secret]);
@@ -319,7 +319,7 @@ var Friend = {
         while (1) {
           switch (_context9.prev = _context9.next) {
             case 0:
-              createQuery = "\n      SELECT tips_mail from anvandare\n      WHERE\n        anvandarnamn = $1\n    ";
+              createQuery = "\n      SELECT tips_mail from anvandare\n      WHERE\n        anvandarnamn = ?\n    ";
               _context9.next = 3;
               return _db["default"].query(createQuery, [req.user.username]);
 
@@ -351,7 +351,7 @@ var Friend = {
         while (1) {
           switch (_context10.prev = _context10.next) {
             case 0:
-              createQuery = "UPDATE anvandare\n    SET\n      tips_mail = $2\n    WHERE\n      anvandarnamn = $1\n    RETURNING tips_mail\n    ";
+              createQuery = "UPDATE anvandare\n    SET\n      tips_mail = ?\n    WHERE\n      anvandarnamn = ?\n    RETURNING tips_mail\n    ";
               console.log("TipsMail from backend", req.body.tips_mail);
               _context10.next = 4;
               return _db["default"].query(createQuery, [req.user.username, req.body.tips_mail]);

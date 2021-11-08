@@ -22,7 +22,7 @@ var Rec = {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              createQuery = "\n      INSERT INTO rekommendationer (tipsare, mottagare, beskrivning, avsnitt)\n      VALUES ($1, $2, $3, $4)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO rekommendationer (tipsare, mottagare, beskrivning, avsnitt)\n      VALUES (?, ?, ?, ?)\n      RETURNING *\n    ";
               values = [req.body.sender, req.body.receiver, req.body.description, req.body.episode];
               _context.prev = 2;
               _context.next = 5;
@@ -54,7 +54,7 @@ var Rec = {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              createQuery = "\n    SELECT avsnitt, tipsare FROM rekommendationer\n    WHERE\n      mottagare LIKE $1\n   ";
+              createQuery = "\n    SELECT avsnitt, tipsare FROM rekommendationer\n    WHERE\n      mottagare LIKE ?\n   ";
               values = [req.body.username];
               _context2.prev = 2;
               _context2.next = 5;
@@ -86,7 +86,7 @@ var Rec = {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              createQuery = "\n      DELETE FROM rekommendationer\n      WHERE\n        mottagare = $1\n      AND\n        tipsare = $2\n      AND\n        avsnitt = $3\n      RETURNING *\n    ";
+              createQuery = "\n      DELETE FROM rekommendationer\n      WHERE\n        mottagare = ?\n      AND\n        tipsare = ?\n      AND\n        avsnitt = ?\n      RETURNING *\n    ";
               values = [req.body.receiver, req.body.sender, req.body.episode];
               _context3.prev = 2;
               _context3.next = 5;

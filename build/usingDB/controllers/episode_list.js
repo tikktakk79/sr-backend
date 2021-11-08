@@ -24,7 +24,7 @@ var Episode = {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, betyg)\n      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, betyg)\n      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n      RETURNING *\n    ";
               grade = req.body.grade;
               console.log("GRADE:", grade);
               grade = parseInt(grade);
@@ -65,7 +65,7 @@ var Episode = {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              createQuery = "\n      INSERT INTO programbetyg (anvandare, programid, programnamn, betyg)\n      VALUES ($1, $2, $3, $4)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO programbetyg (anvandare, programid, programnamn, betyg)\n      VALUES (?, ?, ?, ?)\n      RETURNING *\n    ";
               grade = req.body.grade;
               console.log("GRADE:", grade);
 
@@ -111,7 +111,7 @@ var Episode = {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              createQuery = "UPDATE programbetyg\n     SET betyg = $1\n     WHERE anvandare =$2\n     AND programid = $3\n     RETURNING *  \n    ";
+              createQuery = "UPDATE programbetyg\n     SET betyg = ?\n     WHERE anvandare =?\n     AND programid = ?\n     RETURNING *  \n    ";
               grade = req.body.grade;
 
               if (!!grade) {
@@ -149,7 +149,7 @@ var Episode = {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              createQuery = " DELETE  from programbetyg \n      WHERE anvandare \n        LIKE $1\n      AND \n        programid LIKE $2\n      RETURNING *\n    ";
+              createQuery = " DELETE  from programbetyg \n      WHERE anvandare \n        LIKE ?\n      AND \n        programid LIKE ?\n      RETURNING *\n    ";
               values = [req.user.username, req.body.program_id];
               _context4.prev = 2;
               _context4.next = 5;
@@ -182,7 +182,7 @@ var Episode = {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
-              createQuery = "\n    SELECT * FROM programbetyg\n    WHERE\n      anvandare LIKE $1\n   ";
+              createQuery = "\n    SELECT * FROM programbetyg\n    WHERE\n      anvandare LIKE ?\n   ";
               console.log("USER data:", req.user);
               console.log("RUnning get programs in backend");
               values = [req.user.username];
@@ -220,7 +220,7 @@ var Episode = {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              createQuery = "\n    SELECT * FROM sparade_avsnitt\n    WHERE\n      anvandare LIKE $1\n    AND \n      tipsare IS null\n   ";
+              createQuery = "\n    SELECT * FROM sparade_avsnitt\n    WHERE\n      anvandare LIKE ?\n    AND \n      tipsare IS null\n   ";
               console.log("USER data:", req.user);
               console.log("RUnning get episodes in backend");
               values = [req.user.username];
@@ -258,7 +258,7 @@ var Episode = {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
-              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare = $1\n      AND\n        avsnitt = $2\n      RETURNING *\n    ";
+              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare = ?\n      AND\n        avsnitt = ?\n      RETURNING *\n    ";
               values = [req.user.username, req.body.episode_id];
               _context7.prev = 2;
               _context7.next = 5;
@@ -291,7 +291,7 @@ var Episode = {
           switch (_context8.prev = _context8.next) {
             case 0:
               console.log("Hello from setGrade in backend");
-              createQuery = "\n    UPDATE sparade_avsnitt\n    SET betyg = $1\n    WHERE\n      anvandare LIKE $2\n    AND\n      avsnitt = $3\n    RETURNING *\n   ";
+              createQuery = "\n    UPDATE sparade_avsnitt\n    SET betyg = ?\n    WHERE\n      anvandare LIKE ?\n    AND\n      avsnitt = ?\n    RETURNING *\n   ";
               console.log("Running set grade in backend");
               values = [req.body.grade, req.user.username, req.body.episode_id];
               console.log("VAlues för grade, username och episode_id", values);
@@ -328,10 +328,10 @@ var Episode = {
             case 0:
               console.log("req.body.username", req.body.username);
               console.log("req.body.episode_id", req.body.episode_id);
-              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)\n      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)\n      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n      RETURNING *\n    ";
               values = [req.body.username, req.body.episode_id, req.body.title, req.body.show_name, req.body.show_id, req.body.description, req.body.url, req.body.listen_link, req.body.pub_date, req.user.username, true];
-              createQuery2 = "select \n      EXTRACT(EPOCH FROM (current_timestamp - tipsad)) \n    AS difference, email, tips_mail \n      from anvandare\n    WHERE\n      anvandarnamn = $1\n    ";
-              createQuery3 = "update anvandare\n      set tipsad = current_timestamp\n      where anvandarnamn = $1\n    ";
+              createQuery2 = "select \n      EXTRACT(EPOCH FROM (current_timestamp - tipsad)) \n    AS difference, email, tips_mail \n      from anvandare\n    WHERE\n      anvandarnamn = ?\n    ";
+              createQuery3 = "update anvandare\n      set tipsad = current_timestamp\n      where anvandarnamn = ?\n    ";
               values2 = [req.body.username];
               _context11.prev = 7;
               _context11.next = 10;
@@ -449,8 +449,8 @@ var Episode = {
         while (1) {
           switch (_context12.prev = _context12.next) {
             case 0:
-              createQuery1 = "\n    SELECT * FROM sparade_avsnitt\n    WHERE\n      anvandare LIKE $1\n    AND \n      tipsare IS NOT null\n   ";
-              createQuery2 = "\n   SELECT * FROM sparade_avsnitt\n   WHERE\n     tipsare LIKE $1\n  ";
+              createQuery1 = "\n    SELECT * FROM sparade_avsnitt\n    WHERE\n      anvandare LIKE ?\n    AND \n      tipsare IS NOT null\n   ";
+              createQuery2 = "\n   SELECT * FROM sparade_avsnitt\n   WHERE\n     tipsare LIKE ?\n  ";
               console.log("USER data:", req.user);
               console.log("RUnning get tips in backend");
               values = [req.user.username];
@@ -493,7 +493,7 @@ var Episode = {
         while (1) {
           switch (_context13.prev = _context13.next) {
             case 0:
-              createQuery = "\n      UPDATE sparade_avsnitt\n      SET\n        nytt_tips = FALSE\n      WHERE\n        anvandare = $1\n      RETURNING *\n    ";
+              createQuery = "\n      UPDATE sparade_avsnitt\n      SET\n        nytt_tips = FALSE\n      WHERE\n        anvandare = ?\n      RETURNING *\n    ";
               _context13.next = 3;
               return _db["default"].query(createQuery, [req.user.username]);
 
@@ -523,7 +523,7 @@ var Episode = {
         while (1) {
           switch (_context14.prev = _context14.next) {
             case 0:
-              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare LIKE $1\n      AND\n        tipsare IS NOT null\n    ";
+              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare LIKE ?\n      AND\n        tipsare IS NOT null\n    ";
               _context14.prev = 1;
               _context14.next = 4;
               return _db["default"].query(createQuery, [req.user.username]);
@@ -553,7 +553,7 @@ var Episode = {
             case 0:
               console.log("Running removeOneTip");
               console.log("In backend:", req.body.user, req.body.episodeId);
-              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare = $1\n      AND\n        tipsare = $2\n      AND\n        avsnitt = $3\n    ";
+              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare = ?\n      AND\n        tipsare = ?\n      AND\n        avsnitt = ?\n    ";
               _context15.prev = 3;
               _context15.next = 6;
               return _db["default"].query(createQuery, [req.user.username, req.body.user, req.body.episodeId]);

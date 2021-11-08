@@ -51,9 +51,11 @@ if (process.env.NODE_ENV !== 'production') {
 let allowed
 
 if (process.env.DATABASE_URL.includes("localhost")) {
+  console.log("On localhost")
   allowed = 
-  ["http://localhost:8080","http://localhost:5000"]
+  ["http://localhost:8080"]
 } else {
+  console.log("Not on localhost")
   allowed = ["https://sr-finder-frontend.herokuapp.com", "https://radioskugga.herokuapp.com","https://sr-frontend-vue.herokuapp.com", "https://www.sjoburger.com"]
 }
   
@@ -63,7 +65,7 @@ let corsOptions = {
 }
 
 app.use(express.json())
-// app.use(cors(corsOptions))
+app.use(cors(corsOptions))
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"))

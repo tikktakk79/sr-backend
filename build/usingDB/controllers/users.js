@@ -15,6 +15,8 @@ var _helper = _interopRequireDefault(require("./helper.js"));
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
+var _winston = _interopRequireDefault(require("winston"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -60,8 +62,8 @@ var User = {
 
             case 3:
               hashPassword = _helper["default"].hashPassword(req.body.password);
-              removeDuplicate = "DELETE FROM anvandare\n      WHERE\n        status = 'pending'\n      AND\n        email = $1\n    ";
-              createQuery = "INSERT INTO\n      anvandare (anvandarnamn, fornamn, efternamn, email, losenord, aktiveringskod)\n      VALUES ($1, $2, $3, $4, $5, $6)\n      returning *"; // const token = helper.generateToken(rows[0].anvandarnamn)
+              removeDuplicate = "DELETE FROM anvandare\n      WHERE\n        status = 'pending'\n      AND\n        email = ?\n    ";
+              createQuery = "INSERT INTO\n      anvandare (anvandarnamn, fornamn, efternamn, email, losenord, aktiveringskod)\n      VALUES (?, ?, ?, ?, ?, ?)\n      "; // const token = helper.generateToken(rows[0].anvandarnamn)
               // req.session.token = token
               // return res.status(201).send({ token })
 
@@ -184,7 +186,7 @@ var User = {
 
             case 3:
               console.log("111We got to here!");
-              text = "SELECT * FROM anvandare WHERE anvandarnamn = $1";
+              text = "SELECT * FROM anvandare WHERE anvandarnamn = ?";
               _context2.prev = 5;
               console.log("222We got to here!");
               _context2.next = 9;
@@ -260,7 +262,7 @@ var User = {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              deleteQuery = "DELETE FROM anvandare WHERE anvandarnamn=$1 returning *";
+              deleteQuery = "DELETE FROM anvandare WHERE anvandarnamn=? returning *";
               _context3.prev = 1;
               _context3.next = 4;
               return _db["default"].query(deleteQuery, [req.body.username
@@ -304,7 +306,7 @@ var User = {
           switch (_context4.prev = _context4.next) {
             case 0:
               console.log("Running user update on backend");
-              updateQuery = "UPDATE anvandare\n        SET (fornamn, efternamn, email) =\n        ($1, $2, $3)\n        WHERE anvandarnamn=$4 returning *";
+              updateQuery = "UPDATE anvandare\n        SET (fornamn, efternamn, email) =\n        (?, ?, ?)\n        WHERE anvandarnamn=? returning *";
               _context4.prev = 2;
               _context4.next = 5;
               return _db["default"].query(updateQuery, [req.body.firstname, req.body.lastname, req.body.email, req.user.username]);
@@ -346,7 +348,7 @@ var User = {
 
             case 3:
               console.log("222We got to here!");
-              text = "SELECT * FROM anvandare WHERE anvandarnamn = $1";
+              text = "SELECT * FROM anvandare WHERE anvandarnamn = ?";
               _context5.prev = 5;
               _context5.next = 8;
               return _db["default"].query(text, [req.user.username]);
@@ -380,7 +382,7 @@ var User = {
 
             case 17:
               console.log("KOM enda hit, lösenordet stämmer");
-              passwordQuery = "UPDATE anvandare\n          SET losenord = $1\n          WHERE anvandarnamn=$2";
+              passwordQuery = "UPDATE anvandare\n          SET losenord = ?\n          WHERE anvandarnamn=?";
               hashPassword = _helper["default"].hashPassword(req.body.newPassword);
               _context5.prev = 20;
               _context5.next = 23;
@@ -420,7 +422,7 @@ var User = {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              createQuery = "SELECT anvandarnamn, fornamn, efternamn, email\n    FROM anvandare\n    WHERE anvandarnamn LIKE $1";
+              createQuery = "SELECT anvandarnamn, fornamn, efternamn, email\n    FROM anvandare\n    WHERE anvandarnamn LIKE ?";
               _context6.prev = 1;
               _context6.next = 4;
               return _db["default"].query(createQuery, [req.user.username]);
@@ -454,7 +456,7 @@ var User = {
           switch (_context7.prev = _context7.next) {
             case 0:
               console.log("Searching for users");
-              createQuery = "SELECT anvandarnamn, hemligt FROM anvandare\n    WHERE\n      anvandarnamn ILIKE\n        $1\n   ";
+              createQuery = "SELECT anvandarnamn, hemligt FROM anvandare\n    WHERE\n      anvandarnamn ILIKE\n        ?\n   ";
               console.log("QUERY", req.query);
               console.log("QUERY FIRSTNAME", req.query.firstname);
               username = req.query.username || "";
@@ -517,7 +519,7 @@ var User = {
               }));
 
             case 10:
-              updateUser = "\n      UPDATE anvandare\n      SET \n        aktiveringskod = null,\n        status = 'member'\n      WHERE\n        aktiveringskod = $1\n      AND\n        email = $2\n    ";
+              updateUser = "\n      UPDATE anvandare\n      SET \n        aktiveringskod = null,\n        status = 'member'\n      WHERE\n        aktiveringskod = ?\n      AND\n        email = ?\n    ";
               values = [req.params.secretCode, decoded.email];
               _context8.prev = 12;
               _context8.next = 15;

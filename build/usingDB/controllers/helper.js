@@ -118,7 +118,7 @@ var Helper = {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              createQuery1 = "\n      SELECT hemligt from anvandare \n      WHERE\n        anvandarnamn LIKE $1\n    ";
+              createQuery1 = "\n      SELECT hemligt from anvandare \n      WHERE\n        anvandarnamn LIKE ?\n    ";
               _context.next = 3;
               return db.query(createQuery1, [req.body.username]);
 
@@ -135,7 +135,7 @@ var Helper = {
               return _context.abrupt("return", true);
 
             case 8:
-              createQuery2 = "\n    select * from vanner\n    where \n      (anvandare1 LIKE $1 AND anvandare2 LIKE $2)\n    OR \n      (anvandare2 LIKE $1 AND anvandare1 LIKE $2)\n    AND  \n      (godkann IS NULL OR godkann LIKE $1)\n    ";
+              createQuery2 = "\n    select * from vanner\n    where \n      (anvandare1 LIKE ? AND anvandare2 LIKE ?)\n    OR \n      (anvandare2 LIKE ? AND anvandare1 LIKE ?)\n    AND  \n      (godkann IS NULL OR godkann LIKE ?)\n    ";
               _context.next = 11;
               return db.query(createQuery2, [req.user.username, req.body.username]);
 

@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _pg = require("pg");
+var _mysql = _interopRequireDefault(require("mysql2"));
 
 var _dotenv = _interopRequireDefault(require("dotenv"));
 
@@ -24,8 +24,14 @@ if (!process.env.DATABASE_URL.includes("localhost")) {
   };
 }
 
-var pool = new _pg.Pool(poolObject);
-pool.on("connect", function () {
+var pool = _mysql["default"].createPool({
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DB
+});
+
+pool.on("connection", function () {
   console.log("connected to the db");
 });
 var _default = {
@@ -37,11 +43,22 @@ var _default = {
    */
   query: function query(text, params) {
     return new Promise(function (resolve, reject) {
-      pool.query(text, params).then(function (res) {
-        console.log("Tror det gick vägen nu uppd*");
-        resolve(res);
-      })["catch"](function (err) {
-        reject(err);
+      pool.getConnection(function (err, conn) {
+        if (err) {
+          console.log('query connec error!', err); // resolve(err);
+        } else {
+          conn.query(text, params, function (err, rows) {
+            if (err) {
+              console.log("Query failed", err);
+              reject(err);
+            } else {
+              console.log("Query worked");
+              resolve(rows);
+            }
+
+            conn.release;
+          });
+        }
       });
     });
   }

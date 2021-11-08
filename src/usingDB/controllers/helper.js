@@ -103,7 +103,7 @@ const Helper = {
     let createQuery1 = `
       SELECT hemligt from anvandare 
       WHERE
-        anvandarnamn LIKE $1
+        anvandarnamn LIKE ?
     `
 
     let { rows } = await db.query(createQuery1, [req.body.username])
@@ -116,11 +116,11 @@ const Helper = {
     let createQuery2 = `
     select * from vanner
     where 
-      (anvandare1 LIKE $1 AND anvandare2 LIKE $2)
+      (anvandare1 LIKE ? AND anvandare2 LIKE ?)
     OR 
-      (anvandare2 LIKE $1 AND anvandare1 LIKE $2)
+      (anvandare2 LIKE ? AND anvandare1 LIKE ?)
     AND  
-      (godkann IS NULL OR godkann LIKE $1)
+      (godkann IS NULL OR godkann LIKE ?)
     `
 
     let rows2 = await db.query(createQuery2, [req.user.username, req.body.username])

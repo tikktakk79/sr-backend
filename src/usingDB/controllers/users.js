@@ -34,74 +34,65 @@ const User = {
       WHERE
         status = 'pending'
       AND
-        email = $1
+        email = ?
     `
 
     const createQuery = `INSERT INTO
       anvandare (anvandarnamn, fornamn, efternamn, email, losenord, aktiveringskod)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      returning *`
+      VALUES (?, ?, ?, ?, ?, ?)
+      `
 
 
     
       
-      // const token = helper.generateToken(rows[0].anvandarnamn)
-      // req.session.token = token
-      // return res.status(201).send({ token })
-      const baseUrl = "https://" + req.get("host");
-      const secretCode = helper.createVerificationToken(req.body.email);
+    // const token = helper.generateToken(rows[0].anvandarnamn)
+    // req.session.token = token
+    // return res.status(201).send({ token })
+    const baseUrl = "https://" + req.get("host");
+    const secretCode = helper.createVerificationToken(req.body.email);
 
-      console.log("secret Code", secretCode);
+    console.log("secret Code", secretCode);
 
-      const values = [
-        req.body.username,
-        req.body.firstname,
-        req.body.lastname,
-        req.body.email,
-        hashPassword, //hashPassword
-        secretCode
-      ]
+    const values = [
+      req.body.username,
+      req.body.firstname,
+      req.body.lastname,
+      req.body.email,
+      hashPassword, //hashPassword
+      secretCode
+    ]
 
 
-      try {
-        const rowsDuplicate = await db.query(removeDuplicate, [values[3]])
-        console.log("ROWSdupl", rowsDuplicate);
-        } catch (error){
-  
+    try {
+      await db.query(removeDuplicate, [values[3]])
+      } catch (error){
         console.log("Error in register db query", error);
-        }
-  
+      }
+
+    try {
+      console.log("Before create query in db")
+      await db.query(createQuery, values)
+      console.log("After create query")
+
       try {
-        console.log("Before create query in db")
-        const { rows } = await db.query(createQuery, values)
-        console.log("After create query")
-
-        try {
-          
-          const mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
-            to: req.body.email,
-            subject: 'Confirm registration',
-            text: `Använd följande länk för att aktivera ditt konto på Radioskugga: ${baseUrl}/api/user/verification/verify-account/${secretCode}`,
-            html: `<p>Använd följande länk för att aktivera ditt konto på Radioskugga: &nbsp;<strong></p><h3><a href="${baseUrl}/api/user/verification/verify-account/${secretCode}" target="_blank">Aktivera konto</a></strong></h3>`,
-          }
-          console.log("Trying to send email")
-          await helper.transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-            console.log("Error sending mail", error);
-            } else {
-              console.log('Email sent: ' + info.response);
-              return res.status(200).send()
-            }
-          });
-          console.log("Mail sent");
-    
-    
-    
-    
         
-
-        console.log("ROWS", rows);
+        const mailOptions = {
+          from: process.env.EMAIL_ADDRESS,
+          to: req.body.email,
+          subject: 'Confirm registration',
+          text: `Använd följande länk för att aktivera ditt konto på Radioskugga: ${baseUrl}/api/user/verification/verify-account/${secretCode}`,
+          html: `<p>Använd följande länk för att aktivera ditt konto på Radioskugga: &nbsp;<strong></p><h3><a href="${baseUrl}/api/user/verification/verify-account/${secretCode}" target="_blank">Aktivera konto</a></strong></h3>`,
+        }
+        console.log("Trying to send email")
+        await helper.transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+          console.log("Error sending mail", error);
+          } else {
+            console.log('Email sent: ' + info.response);
+            return res.status(200).send()
+          }
+        });
+          console.log("Mail sent");
         } catch (error){
   
         console.log("Error in register db query", error);
@@ -129,7 +120,7 @@ const User = {
       return res.status(400).send({ message: "Alla fält är inte ifyllda" })
     }
     console.log("111We got to here!")
-    const text = "SELECT * FROM anvandare WHERE anvandarnamn = $1"
+    const text = "SELECT * FROM anvandare WHERE anvandarnamn = ?"
     try {
       console.log("222We got to here!")
       const { rows } = await db.query(text, [req.body.username])
@@ -170,15 +161,22 @@ const User = {
    * @returns {void} return status code 204
    */
   async deleteUser(req, res) {
+    const selectQuery =
+      "SELECT * FROM anvandare WHERE anvandarnamn=?"
     const deleteQuery =
-      "DELETE FROM anvandare WHERE anvandarnamn=$1 returning *"
+      "DELETE FROM anvandare WHERE anvandarnamn=?"
     try {
-      const { rows } = await db.query(deleteQuery, [
+      let {rows} = await db.query(deleteQuery, [
         req.body.username /* req.user.username */
       ])
+
       if (!rows[0]) {
         return res.status(404).send({ message: "Användare hittades ej" })
       }
+      await db.query(deleteQuery, [
+        req.body.username /* req.user.username */
+      ])
+
       return res.status(204).send()
     } catch (error) {
       return res.status(400).send(error)
@@ -191,8 +189,8 @@ const User = {
     const updateQuery =
       `UPDATE anvandare
         SET (fornamn, efternamn, email) =
-        ($1, $2, $3)
-        WHERE anvandarnamn=$4 returning *`
+        (?, ?, ?)
+        WHERE anvandarnamn=?`
 
       try {
         await db.query(updateQuery, [
@@ -213,7 +211,7 @@ const User = {
       return res.status(400).send({ message: "Alla fält är inte ifyllda" })
     }
     console.log("222We got to here!")
-    const text = "SELECT * FROM anvandare WHERE anvandarnamn = $1"
+    const text = "SELECT * FROM anvandare WHERE anvandarnamn = ?"
 
     try {
       const { rows } = await db.query(text, [req.user.username])
@@ -235,8 +233,8 @@ const User = {
       console.log("KOM enda hit, lösenordet stämmer")
       const passwordQuery =
         `UPDATE anvandare
-          SET losenord = $1
-          WHERE anvandarnamn=$2`
+          SET losenord = ?
+          WHERE anvandarnamn=?`
 
       const hashPassword = helper.hashPassword(req.body.newPassword)
       try {
@@ -257,7 +255,7 @@ const User = {
     const createQuery =
     `SELECT anvandarnamn, fornamn, efternamn, email
     FROM anvandare
-    WHERE anvandarnamn LIKE $1`
+    WHERE anvandarnamn LIKE ?`
 
     try {
       const { rows } = await db.query(createQuery, [req.user.username])
@@ -274,7 +272,7 @@ const User = {
     const createQuery = `SELECT anvandarnamn, hemligt FROM anvandare
     WHERE
       anvandarnamn ILIKE
-        $1
+        ?
    `
 
     console.log("QUERY", req.query)
@@ -326,9 +324,9 @@ const User = {
         aktiveringskod = null,
         status = 'member'
       WHERE
-        aktiveringskod = $1
+        aktiveringskod = ?
       AND
-        email = $2
+        email = ?
     `
     const values = [req.params.secretCode, decoded.email]
 

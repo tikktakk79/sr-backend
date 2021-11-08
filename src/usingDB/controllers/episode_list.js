@@ -5,8 +5,7 @@ const Episode = {
   async saveEpisode(req, res) {
     const createQuery = `
       INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, betyg)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING *
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
     let grade = req.body.grade
 
@@ -35,8 +34,8 @@ const Episode = {
     console.log("GRADE", grade)
 
     try {
-      const { rows } = await db.query(createQuery, values)
-      return res.status(201).send(rows[0])
+      await db.query(createQuery, values)
+      return res.status(201).end()
     } catch (error) {
       console.log("Error in saveEpisode", error)
       return res.status(400).send(error)
@@ -46,8 +45,7 @@ const Episode = {
 async gradeProgram(req, res) {
     const createQuery = `
       INSERT INTO programbetyg (anvandare, programid, programnamn, betyg)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
+      VALUES (?, ?, ?, ?)
     `
     let grade = req.body.grade
 
@@ -65,9 +63,9 @@ async gradeProgram(req, res) {
     ]
 
     try {
-      const rows = await db.query(createQuery, values)
-      console.log("Grade program worked and returned rows:",rows)
-      return res.status(201).send(rows[0])
+      await db.query(createQuery, values)
+      console.log("Grade program worked")
+      return res.status(201).end()
     } catch (error) {
       if (error.code === "23505") {
         console.log("Japp en 23505:a duplicate..")
@@ -83,10 +81,9 @@ async gradeProgram(req, res) {
 
     const createQuery = 
     `UPDATE programbetyg
-     SET betyg = $1
-     WHERE anvandare =$2
-     AND programid = $3
-     RETURNING *  
+     SET betyg = ?
+     WHERE anvandare =?
+     AND programid = ?
     `
 
     let grade = req.body.grade
@@ -102,9 +99,9 @@ async gradeProgram(req, res) {
     ]
 
     try {
-      const rows = await db.query(createQuery, values)
-      console.log("Update program worked and returned rows:",rows)
-      return res.status(201).send(rows[0])
+      await db.query(createQuery, values)
+      console.log("Update program worked")
+      return res.status(200).end
     } catch (error) {
       console.log("Update program didn't work", error)
       return res.status(400).send(error)
@@ -116,10 +113,9 @@ async gradeProgram(req, res) {
     const createQuery = 
     ` DELETE  from programbetyg 
       WHERE anvandare 
-        LIKE $1
+        LIKE ?
       AND 
-        programid LIKE $2
-      RETURNING *
+        programid LIKE ?
     `
 
     const values = [
@@ -128,9 +124,9 @@ async gradeProgram(req, res) {
     ]
 
     try {
-      const rows = await db.query(createQuery, values)
-      console.log("Delete program worked and returned rows:",rows)
-      return res.status(201).send(rows[0])
+      await db.query(createQuery, values)
+      console.log("Delete program worked and returned rows:")
+      return res.status(200).end()
     } catch (error) {
       console.log("Delete program didn't work", error)
       return res.status(400).send(error)
@@ -141,7 +137,7 @@ async gradeProgram(req, res) {
     const createQuery = `
     SELECT * FROM programbetyg
     WHERE
-      anvandare LIKE $1
+      anvandare LIKE ?
    `
     console.log("USER data:", req.user)
     console.log("RUnning get programs in backend")
@@ -165,7 +161,7 @@ async gradeProgram(req, res) {
     const createQuery = `
     SELECT * FROM sparade_avsnitt
     WHERE
-      anvandare LIKE $1
+      anvandare LIKE ?
     AND 
       tipsare IS null
    `
@@ -192,17 +188,16 @@ async gradeProgram(req, res) {
     const createQuery = `
       DELETE FROM sparade_avsnitt
       WHERE
-        anvandare = $1
+        anvandare = ?
       AND
-        avsnitt = $2
-      RETURNING *
+        avsnitt = ?
     `
 
     const values = [req.user.username, req.body.episode_id]
 
     try {
-      const { rows } = await db.query(createQuery, values)
-      return res.status(200).send(rows[0])
+      await db.query(createQuery, values)
+      return res.status(200).end()
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -212,11 +207,11 @@ async gradeProgram(req, res) {
 
     const createQuery = `
     UPDATE sparade_avsnitt
-    SET betyg = $1
+    SET betyg = ?
     WHERE
-      anvandare LIKE $2
+      anvandare LIKE ?
     AND
-      avsnitt = $3
+      avsnitt = ?
     RETURNING *
    `
     console.log("Running set grade in backend")
@@ -238,7 +233,7 @@ async gradeProgram(req, res) {
     console.log("req.body.episode_id", req.body.episode_id);
     const createQuery = `
       INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       RETURNING *
     `
 
@@ -262,13 +257,13 @@ async gradeProgram(req, res) {
     AS difference, email, tips_mail 
       from anvandare
     WHERE
-      anvandarnamn = $1
+      anvandarnamn = ?
     `
 
     const createQuery3 = 
     `update anvandare
       set tipsad = current_timestamp
-      where anvandarnamn = $1
+      where anvandarnamn = ?
     `
     
     const values2 = [req.body.username]
@@ -322,7 +317,7 @@ async gradeProgram(req, res) {
     const createQuery1 = `
     SELECT * FROM sparade_avsnitt
     WHERE
-      anvandare LIKE $1
+      anvandare LIKE ?
     AND 
       tipsare IS NOT null
    `
@@ -330,7 +325,7 @@ async gradeProgram(req, res) {
    const createQuery2 = `
    SELECT * FROM sparade_avsnitt
    WHERE
-     tipsare LIKE $1
+     tipsare LIKE ?
   `
 
     console.log("USER data:", req.user)
@@ -357,7 +352,7 @@ async gradeProgram(req, res) {
       SET
         nytt_tips = FALSE
       WHERE
-        anvandare = $1
+        anvandare = ?
       RETURNING *
     `
 
@@ -372,7 +367,7 @@ async gradeProgram(req, res) {
     const createQuery = `
       DELETE FROM sparade_avsnitt
       WHERE
-        anvandare LIKE $1
+        anvandare LIKE ?
       AND
         tipsare IS NOT null
     `
@@ -390,11 +385,11 @@ async gradeProgram(req, res) {
     const createQuery = `
       DELETE FROM sparade_avsnitt
       WHERE
-        anvandare = $1
+        anvandare = ?
       AND
-        tipsare = $2
+        tipsare = ?
       AND
-        avsnitt = $3
+        avsnitt = ?
     `
   
     try {

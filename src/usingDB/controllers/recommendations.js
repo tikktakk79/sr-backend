@@ -4,8 +4,7 @@ const Rec = {
   async saveRec(req, res) {
     const createQuery = `
       INSERT INTO rekommendationer (tipsare, mottagare, beskrivning, avsnitt)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
+      VALUES (?, ?, ?, ?)
     `
 
     const values = [
@@ -16,8 +15,8 @@ const Rec = {
     ]
 
     try {
-      const { rows } = await db.query(createQuery, values)
-      return res.status(201).send(rows[0])
+      await db.query(createQuery, values)
+      return res.status(201).end()
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -27,7 +26,7 @@ const Rec = {
     const createQuery = `
     SELECT avsnitt, tipsare FROM rekommendationer
     WHERE
-      mottagare LIKE $1
+      mottagare LIKE ?
    `
 
     const values = [req.body.username]
@@ -44,19 +43,18 @@ const Rec = {
     const createQuery = `
       DELETE FROM rekommendationer
       WHERE
-        mottagare = $1
+        mottagare = ?
       AND
-        tipsare = $2
+        tipsare = ?
       AND
-        avsnitt = $3
-      RETURNING *
+        avsnitt = ?
     `
 
     const values = [req.body.receiver, req.body.sender, req.body.episode]
 
     try {
-      const { rows } = await db.query(createQuery, values)
-      return res.status(204).send()
+      await db.query(createQuery, values)
+      return res.status(204).end()
     } catch (error) {
       return res.status(400).send(error)
     }

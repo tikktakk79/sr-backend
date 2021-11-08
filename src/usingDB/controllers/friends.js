@@ -5,14 +5,14 @@ import helper from "./helper.js"
 const Friend = {
   async addFriend(req, res) {
     const createQuery = `
-      CALL ny_van($1, $2);
+      CALL ny_van(?, ?);
     `
 
     const createQuery2 = `
       SELECT * FROM vanner WHERE 
-        anvandare1 = LEAST($1, $2)
+        anvandare1 = LEAST(?, ?)
       AND
-        anvandare2 = GREATEST($1, $2)
+        anvandare2 = GREATEST(?, ?)
       ;
     `
 
@@ -36,9 +36,9 @@ const Friend = {
       UPDATE vanner
       SET godkann = null,
       ny_fraga = FALSE
-      WHERE anvandare1 = $2
-        OR anvandare2 = $2
-        AND godkann = $1
+      WHERE anvandare1 = ?
+        OR anvandare2 = ?
+        AND godkann = ?
       RETURNING *
     `
 
@@ -46,8 +46,7 @@ const Friend = {
 
     try {
       const { rows, rowCount } = await db.query(createQuery, values)
-      let friendsMod = helper.userRelations(req.user.username, rows)
-      return res.status(200).send(friendsMod)
+      return res.status(200).end()
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -57,10 +56,9 @@ const Friend = {
     const createQuery = `
       UPDATE vanner
       SET ny_fraga = FALSE
-      WHERE anvandare1 = $2
-        OR anvandare2 = $2
-        AND godkann = $1
-      RETURNING *
+      WHERE anvandare1 = ?
+        OR anvandare2 = ?
+        AND godkann = ?
     `
 
     const values = [req.user.username, req.body.receiver]
@@ -68,7 +66,7 @@ const Friend = {
     try {
       const { rows, rowCount } = await db.query(createQuery, values)
 
-      return res.status(200).send(rows)
+      return res.status(200).end()
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -89,9 +87,9 @@ const Friend = {
     ON
       anvandare2 = anv2.anvandarnamn
     WHERE
-      anv1.anvandarnamn = $1
+      anv1.anvandarnamn = ?
     OR
-      anv2.anvandarnamn = $1
+      anv2.anvandarnamn = ?
     ;
 
     `
@@ -111,25 +109,41 @@ const Friend = {
   },
   async deleteFriend(req, res) {
     console.log("Running delete friend on backend")
+
+    const selectQuery = `
+    SELECT * FROM vanner
+      WHERE
+        anvandare1 LIKE LEAST(?, ?)
+      AND
+        anvandare2 LIKE GREATEST(?, ?)
+      ;
+    `
     const deleteQuery = `
       DELETE FROM vanner
         WHERE
-          anvandare1 LIKE LEAST($1, $2)
+          anvandare1 LIKE LEAST(?, ?)
         AND
-          anvandare2 LIKE GREATEST($1, $2)
-        RETURNING *
+          anvandare2 LIKE GREATEST(?, ?)
         ;
       `
     try {
       console.log("Mu uname", req.user.username)
       console.log("Other uname", req.body.receiver)
-      const { rows } = await db.query(deleteQuery, [
+      const rows = await db.query(selectQuery, [
         req.user.username,
         req.body.receiver
       ])
+
+
+
       if (!rows[0]) {
         return res.status(404).send({ message: "friend relation not found" })
       }
+
+      await db.query(deleteQuery, [
+        req.user.username,
+        req.body.receiver
+      ])
       return res.status(204).send()
     } catch (error) {
       return res.status(400).send(error)
@@ -142,13 +156,12 @@ const Friend = {
       SET
         ny_fraga = FALSE
       WHERE
-        godkann = $1
-      RETURNING *
+        godkann = ?
     `
 
     const { rows } = await db.query(createQuery, [req.user.username])
     try {
-      return res.status(204).send(rows)
+      return res.status(204).end()
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -157,7 +170,7 @@ const Friend = {
     const createQuery = `
       SELECT hemligt from anvandare
       WHERE
-        anvandarnamn = $1
+        anvandarnamn = ?
     `
 
     const { rows } = await db.query(createQuery, [req.user.username])
@@ -172,10 +185,9 @@ const Friend = {
   async setSecret(req, res) {
     const createQuery = `UPDATE anvandare
     SET
-      hemligt = $2
+      hemligt = ?
     WHERE
-      anvandarnamn = $1
-    RETURNING hemligt
+      anvandarnamn = ?
     `
 
     console.log("SECRET from backend", req.body.secret)
@@ -185,8 +197,8 @@ const Friend = {
       req.body.secret
     ])
     try {
-      console.log("Set hemligt", rows)
-      return res.status(200).send(rows)
+      console.log("Set hemligt")
+      return res.status(200).end()
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -196,7 +208,7 @@ const Friend = {
     const createQuery = `
       SELECT tips_mail from anvandare
       WHERE
-        anvandarnamn = $1
+        anvandarnamn = ?
     `
 
     const { rows } = await db.query(createQuery, [req.user.username])
@@ -211,21 +223,20 @@ const Friend = {
   async setTipsMail(req, res) {
     const createQuery = `UPDATE anvandare
     SET
-      tips_mail = $2
+      tips_mail = ?
     WHERE
-      anvandarnamn = $1
-    RETURNING tips_mail
+      anvandarnamn = ?
     `
 
     console.log("TipsMail from backend", req.body.tips_mail)
 
-    const { rows } = await db.query(createQuery, [
+    await db.query(createQuery, [
       req.user.username,
       req.body.tips_mail
     ])
     try {
-      console.log("Set tipsMail", rows)
-      return res.status(200).send(rows)
+      console.log("Set tipsMail")
+      return res.status(200).end()
     } catch (error) {
       return res.status(400).send(error)
     }
