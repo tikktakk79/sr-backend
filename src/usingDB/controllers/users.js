@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 import db from "../db"
 import helper from "./helper.js"
 import jwt from "jsonwebtoken"
+import winston from "winston"
 // const cryptoRandomString =  require("crypto-random-string")
 const Str = require('@supercharge/strings')
 const dotenv = require("dotenv")
@@ -123,7 +124,7 @@ const User = {
    * @returns {object} user object
    */
   async loginUser(req, res) {
-    console.log("HEj fron loginUser")
+    console.log("HEj fron loginUser, proc env", process.env.NODE_ENV, )
     if (!req.body.username || !req.body.password) {
       return res.status(400).send({ message: "Alla fält är inte ifyllda" })
     }

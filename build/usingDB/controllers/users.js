@@ -171,7 +171,7 @@ var User = {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              console.log("HEj fron loginUser");
+              console.log("HEj fron loginUser, proc env", process.env.NODE_ENV);
 
               if (!(!req.body.username || !req.body.password)) {
                 _context2.next = 3;

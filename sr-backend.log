@@ -1,0 +1,62 @@
+App 1979250 output: Our app is running on port 8000
+App 1979250 output: info: App is up and running {"service":"user-service"}
+App 990374 output: /home/sjoburger/domains/backend.sjoburger.com/server.js:4
+App 990374 output: import express from "express"
+App 990374 output: ^^^^^^
+App 990374 output: 
+App 990374 output: SyntaxError: Cannot use import statement outside a module
+App 990374 output:     at wrapSafe (internal/modules/cjs/loader.js:915:16)
+App 990374 output:     at Module._compile (internal/modules/cjs/loader.js:963:27)
+App 990374 output:     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+App 990374 output:     at Module.load (internal/modules/cjs/loader.js:863:32)
+App 990374 output:     at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+App 990374 output:     at Module.require (internal/modules/cjs/loader.js:887:19)
+App 990374 output:     at Module.require (/opt/passenger/src/helper-scripts/node-loader.js:80:25)
+App 990374 output:     at require (internal/modules/cjs/helpers.js:74:18)
+App 990374 output:     at loadApplication (/opt/passenger/src/helper-scripts/node-loader.js:243:2)
+App 990374 output:     at setupEnvironment (/opt/passenger/src/helper-scripts/node-loader.js:214:2)
+App 1019831 output: /home/sjoburger/domains/backend.sjoburger.com/server.js:4
+App 1019831 output: import express from "express"
+App 1019831 output: ^^^^^^
+App 1019831 output: 
+App 1019831 output: SyntaxError: Cannot use import statement outside a module
+App 1019831 output:     at wrapSafe (internal/modules/cjs/loader.js:915:16)
+App 1019831 output:     at Module._compile (internal/modules/cjs/loader.js:963:27)
+App 1019831 output:     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+App 1019831 output:     at Module.load (internal/modules/cjs/loader.js:863:32)
+App 1019831 output:     at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+App 1019831 output:     at Module.require (internal/modules/cjs/loader.js:887:19)
+App 1019831 output:     at Module.require (/opt/passenger/src/helper-scripts/node-loader.js:80:25)
+App 1019831 output:     at require (internal/modules/cjs/helpers.js:74:18)
+App 1019831 output:     at loadApplication (/opt/passenger/src/helper-scripts/node-loader.js:243:2)
+App 1019831 output:     at setupEnvironment (/opt/passenger/src/helper-scripts/node-loader.js:214:2)
+App 1020190 output: /home/sjoburger/domains/backend.sjoburger.com/server.js:4
+App 1020190 output: import express from "express"
+App 1020190 output: ^^^^^^
+App 1020190 output: 
+App 1020190 output: SyntaxError: Cannot use import statement outside a module
+App 1020190 output:     at wrapSafe (internal/modules/cjs/loader.js:915:16)
+App 1020190 output:     at Module._compile (internal/modules/cjs/loader.js:963:27)
+App 1020190 output:     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+App 1020190 output:     at Module.load (internal/modules/cjs/loader.js:863:32)
+App 1020190 output:     at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+App 1020190 output:     at Module.require (internal/modules/cjs/loader.js:887:19)
+App 1020190 output:     at Module.require (/opt/passenger/src/helper-scripts/node-loader.js:80:25)
+App 1020190 output:     at require (internal/modules/cjs/helpers.js:74:18)
+App 1020190 output:     at loadApplication (/opt/passenger/src/helper-scripts/node-loader.js:243:2)
+App 1020190 output:     at setupEnvironment (/opt/passenger/src/helper-scripts/node-loader.js:214:2)
+App 1020406 output: /home/sjoburger/domains/backend.sjoburger.com/server.js:4
+App 1020406 output: import express from "express"
+App 1020406 output: ^^^^^^
+App 1020406 output: 
+App 1020406 output: SyntaxError: Cannot use import statement outside a module
+App 1020406 output:     at wrapSafe (internal/modules/cjs/loader.js:915:16)
+App 1020406 output:     at Module._compile (internal/modules/cjs/loader.js:963:27)
+App 1020406 output:     at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+App 1020406 output:     at Module.load (internal/modules/cjs/loader.js:863:32)
+App 1020406 output:     at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+App 1020406 output:     at Module.require (internal/modules/cjs/loader.js:887:19)
+App 1020406 output:     at Module.require (/opt/passenger/src/helper-scripts/node-loader.js:80:25)
+App 1020406 output:     at require (internal/modules/cjs/helpers.js:74:18)
+App 1020406 output:     at loadApplication (/opt/passenger/src/helper-scripts/node-loader.js:243:2)
+App 1020406 output:     at setupEnvironment (/opt/passenger/src/helper-scripts/node-loader.js:214:2)
