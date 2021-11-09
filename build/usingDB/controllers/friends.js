@@ -65,7 +65,7 @@ var Friend = {
   },
   acceptFriend: function acceptFriend(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var createQuery, values, _yield$db$query2, rows, rowCount, friendsMod;
+      var createQuery, values, _yield$db$query2, rows, rowCount;
 
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
@@ -81,20 +81,19 @@ var Friend = {
               _yield$db$query2 = _context2.sent;
               rows = _yield$db$query2.rows;
               rowCount = _yield$db$query2.rowCount;
-              friendsMod = _helper["default"].userRelations(req.user.username, rows);
-              return _context2.abrupt("return", res.status(200).send(friendsMod));
+              return _context2.abrupt("return", res.status(200).end());
 
-            case 12:
-              _context2.prev = 12;
+            case 11:
+              _context2.prev = 11;
               _context2.t0 = _context2["catch"](2);
               return _context2.abrupt("return", res.status(400).send(_context2.t0));
 
-            case 15:
+            case 14:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, null, [[2, 12]]);
+      }, _callee2, null, [[2, 11]]);
     }))();
   },
   waitFriend: function waitFriend(req, res) {
@@ -105,7 +104,7 @@ var Friend = {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              createQuery = "\n      UPDATE vanner\n      SET ny_fraga = FALSE\n      WHERE anvandare1 = ?\n        OR anvandare2 = ?\n        AND godkann = ?\n      RETURNING *\n    ";
+              createQuery = "\n      UPDATE vanner\n      SET ny_fraga = FALSE\n      WHERE anvandare1 = ?\n        OR anvandare2 = ?\n        AND godkann = ?\n    ";
               values = [req.user.username, req.body.receiver];
               _context3.prev = 2;
               _context3.next = 5;
@@ -115,7 +114,7 @@ var Friend = {
               _yield$db$query3 = _context3.sent;
               rows = _yield$db$query3.rows;
               rowCount = _yield$db$query3.rowCount;
-              return _context3.abrupt("return", res.status(200).send(rows));
+              return _context3.abrupt("return", res.status(200).end());
 
             case 11:
               _context3.prev = 11;
@@ -132,8 +131,7 @@ var Friend = {
   },
   listFriends: function listFriends(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-      var createQuery, values, _yield$db$query4, rows, rowCount, friendsMod;
-
+      var createQuery, values, queryResp, rows, rowCount, friendsMod;
       return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
@@ -141,15 +139,15 @@ var Friend = {
               console.log("Running list friends from backend");
               createQuery = "\n    SELECT\n      id, vanner.anvandare1, vanner.anvandare2, vanner.godkann, vanner.ny_fraga, anv1.fornamn AS fnamn1, anv1.efternamn AS enamn1, anv1.email AS email1, anv1.hemligt AS hemligt1, anv2.fornamn AS fnamn2, anv2.efternamn AS enamn2, anv2.email AS email2, anv2.hemligt AS hemligt2\n    FROM\n      vanner\n    JOIN\n      anvandare AS anv1\n    ON\n      anvandare1 = anvandarnamn\n    JOIN\n      anvandare AS anv2\n    ON\n      anvandare2 = anv2.anvandarnamn\n    WHERE\n      anv1.anvandarnamn = ?\n    OR\n      anv2.anvandarnamn = ?\n    ;\n\n    ";
               console.log("Önska mig lycka till innan jag försöker lista vännerna!");
-              values = [req.user.username];
+              values = [req.user.username, req.user.username];
               _context4.prev = 4;
               _context4.next = 7;
               return _db["default"].query(createQuery, values);
 
             case 7:
-              _yield$db$query4 = _context4.sent;
-              rows = _yield$db$query4.rows;
-              rowCount = _yield$db$query4.rowCount;
+              queryResp = _context4.sent;
+              console.log("queryResp in listFriends", queryResp);
+              rows = queryResp.rows, rowCount = queryResp.rowCount;
               console.log("RÖUUWS", rows);
               friendsMod = _helper["default"].userRelations(req.user.username, rows);
               return _context4.abrupt("return", res.status(200).send({
@@ -172,23 +170,22 @@ var Friend = {
   },
   deleteFriend: function deleteFriend(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-      var deleteQuery, _yield$db$query5, rows;
-
+      var selectQuery, deleteQuery, rows;
       return regeneratorRuntime.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
               console.log("Running delete friend on backend");
-              deleteQuery = "\n      DELETE FROM vanner\n        WHERE\n          anvandare1 LIKE LEAST(?, ?)\n        AND\n          anvandare2 LIKE GREATEST(?, ?)\n        RETURNING *\n        ;\n      ";
-              _context5.prev = 2;
+              selectQuery = "\n    SELECT * FROM vanner\n      WHERE\n        anvandare1 LIKE LEAST(?, ?)\n      AND\n        anvandare2 LIKE GREATEST(?, ?)\n      ;\n    ";
+              deleteQuery = "\n      DELETE FROM vanner\n        WHERE\n          anvandare1 LIKE LEAST(?, ?)\n        AND\n          anvandare2 LIKE GREATEST(?, ?)\n        ;\n      ";
+              _context5.prev = 3;
               console.log("Mu uname", req.user.username);
               console.log("Other uname", req.body.receiver);
-              _context5.next = 7;
-              return _db["default"].query(deleteQuery, [req.user.username, req.body.receiver]);
+              _context5.next = 8;
+              return _db["default"].query(selectQuery, [req.user.username, req.body.receiver]);
 
-            case 7:
-              _yield$db$query5 = _context5.sent;
-              rows = _yield$db$query5.rows;
+            case 8:
+              rows = _context5.sent;
 
               if (rows[0]) {
                 _context5.next = 11;
@@ -200,38 +197,42 @@ var Friend = {
               }));
 
             case 11:
+              _context5.next = 13;
+              return _db["default"].query(deleteQuery, [req.user.username, req.body.receiver]);
+
+            case 13:
               return _context5.abrupt("return", res.status(204).send());
 
-            case 14:
-              _context5.prev = 14;
-              _context5.t0 = _context5["catch"](2);
+            case 16:
+              _context5.prev = 16;
+              _context5.t0 = _context5["catch"](3);
               return _context5.abrupt("return", res.status(400).send(_context5.t0));
 
-            case 17:
+            case 19:
             case "end":
               return _context5.stop();
           }
         }
-      }, _callee5, null, [[2, 14]]);
+      }, _callee5, null, [[3, 16]]);
     }))();
   },
   setOld: function setOld(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-      var createQuery, _yield$db$query6, rows;
+      var createQuery, _yield$db$query4, rows;
 
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              createQuery = "\n      UPDATE vanner\n      SET\n        ny_fraga = FALSE\n      WHERE\n        godkann = ?\n      RETURNING *\n    ";
+              createQuery = "\n      UPDATE vanner\n      SET\n        ny_fraga = FALSE\n      WHERE\n        godkann = ?\n    ";
               _context6.next = 3;
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query6 = _context6.sent;
-              rows = _yield$db$query6.rows;
+              _yield$db$query4 = _context6.sent;
+              rows = _yield$db$query4.rows;
               _context6.prev = 5;
-              return _context6.abrupt("return", res.status(204).send(rows));
+              return _context6.abrupt("return", res.status(204).end());
 
             case 9:
               _context6.prev = 9;
@@ -248,7 +249,7 @@ var Friend = {
   },
   getSecret: function getSecret(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-      var createQuery, _yield$db$query7, rows;
+      var createQuery, _yield$db$query5, rows;
 
       return regeneratorRuntime.wrap(function _callee7$(_context7) {
         while (1) {
@@ -259,8 +260,8 @@ var Friend = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query7 = _context7.sent;
-              rows = _yield$db$query7.rows;
+              _yield$db$query5 = _context7.sent;
+              rows = _yield$db$query5.rows;
               _context7.prev = 5;
               console.log("Got hemligt from user in db", rows);
               return _context7.abrupt("return", res.status(200).send(rows));
@@ -280,23 +281,23 @@ var Friend = {
   },
   setSecret: function setSecret(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
-      var createQuery, _yield$db$query8, rows;
+      var createQuery, _yield$db$query6, rows;
 
       return regeneratorRuntime.wrap(function _callee8$(_context8) {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
-              createQuery = "UPDATE anvandare\n    SET\n      hemligt = ?\n    WHERE\n      anvandarnamn = ?\n    RETURNING hemligt\n    ";
+              createQuery = "UPDATE anvandare\n    SET\n      hemligt = ?\n    WHERE\n      anvandarnamn = ?\n    ";
               console.log("SECRET from backend", req.body.secret);
               _context8.next = 4;
               return _db["default"].query(createQuery, [req.user.username, req.body.secret]);
 
             case 4:
-              _yield$db$query8 = _context8.sent;
-              rows = _yield$db$query8.rows;
+              _yield$db$query6 = _context8.sent;
+              rows = _yield$db$query6.rows;
               _context8.prev = 6;
-              console.log("Set hemligt", rows);
-              return _context8.abrupt("return", res.status(200).send(rows));
+              console.log("Set hemligt");
+              return _context8.abrupt("return", res.status(200).end());
 
             case 11:
               _context8.prev = 11;
@@ -313,7 +314,7 @@ var Friend = {
   },
   getTipsMail: function getTipsMail(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
-      var createQuery, _yield$db$query9, rows;
+      var createQuery, _yield$db$query7, rows;
 
       return regeneratorRuntime.wrap(function _callee9$(_context9) {
         while (1) {
@@ -324,8 +325,8 @@ var Friend = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query9 = _context9.sent;
-              rows = _yield$db$query9.rows;
+              _yield$db$query7 = _context9.sent;
+              rows = _yield$db$query7.rows;
               _context9.prev = 5;
               console.log("Got tips_mail from user in db", rows);
               return _context9.abrupt("return", res.status(200).send(rows));
@@ -345,35 +346,32 @@ var Friend = {
   },
   setTipsMail: function setTipsMail(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
-      var createQuery, _yield$db$query10, rows;
-
+      var createQuery;
       return regeneratorRuntime.wrap(function _callee10$(_context10) {
         while (1) {
           switch (_context10.prev = _context10.next) {
             case 0:
-              createQuery = "UPDATE anvandare\n    SET\n      tips_mail = ?\n    WHERE\n      anvandarnamn = ?\n    RETURNING tips_mail\n    ";
+              createQuery = "UPDATE anvandare\n    SET\n      tips_mail = ?\n    WHERE\n      anvandarnamn = ?\n    ";
               console.log("TipsMail from backend", req.body.tips_mail);
               _context10.next = 4;
               return _db["default"].query(createQuery, [req.user.username, req.body.tips_mail]);
 
             case 4:
-              _yield$db$query10 = _context10.sent;
-              rows = _yield$db$query10.rows;
-              _context10.prev = 6;
-              console.log("Set tipsMail", rows);
-              return _context10.abrupt("return", res.status(200).send(rows));
+              _context10.prev = 4;
+              console.log("Set tipsMail");
+              return _context10.abrupt("return", res.status(200).end());
 
-            case 11:
-              _context10.prev = 11;
-              _context10.t0 = _context10["catch"](6);
+            case 9:
+              _context10.prev = 9;
+              _context10.t0 = _context10["catch"](4);
               return _context10.abrupt("return", res.status(400).send(_context10.t0));
 
-            case 14:
+            case 12:
             case "end":
               return _context10.stop();
           }
         }
-      }, _callee10, null, [[6, 11]]);
+      }, _callee10, null, [[4, 9]]);
     }))();
   },
   program: function program(req, res) {

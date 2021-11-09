@@ -48,7 +48,12 @@ const User = {
     // const token = helper.generateToken(rows[0].anvandarnamn)
     // req.session.token = token
     // return res.status(201).send({ token })
-    const baseUrl = "https://" + req.get("host");
+  
+    let baseUrl = "https://" + req.get("host")
+
+    if (process.env.NODE_ENV = "development") {
+      baseUrl = "http://" + req.get("host")
+    }
     const secretCode = helper.createVerificationToken(req.body.email);
 
     console.log("secret Code", secretCode);
@@ -119,11 +124,24 @@ const User = {
     if (!req.body.username || !req.body.password) {
       return res.status(400).send({ message: "Alla fält är inte ifyllda" })
     }
-    console.log("111We got to here!")
+    console.log("1We got to here!")
     const text = "SELECT * FROM anvandare WHERE anvandarnamn = ?"
+  
     try {
-      console.log("222We got to here!")
-      const { rows } = await db.query(text, [req.body.username])
+      console.log("2We got to here!")
+      console.log("AND HERE")
+      console.log("UNAME", req.body.username)
+      
+      let rows 
+
+      try {
+        // rows = await db.query(text, [req.body.username])
+        console.log("Query text", text)
+        rows = await db.query(text, [req.body.username])
+      }
+        catch (error) {
+        console.log("Error i login query", error)
+      }
       console.log("Queryn funkade här kommer rows", rows)
       if (!rows[0]) {
         res.statusMessage = "No match for user in database"
@@ -150,6 +168,7 @@ const User = {
       const token = helper.generateToken(rows[0].anvandarnamn)
       return res.status(200).send({ token })
     } catch (error) {
+      console.log("ERROR", error)
       return res.status(400).send(error)
     }
   },
@@ -306,6 +325,7 @@ const User = {
   async verifyAccount(req, res) {
 
     let decoded
+    console.log("Verifying account")
 
     try {
       decoded = await jwt.verify(req.params.secretCode, process.env. SECRET)

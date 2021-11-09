@@ -18,13 +18,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 var Episode = {
   saveEpisode: function saveEpisode(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var createQuery, grade, values, _yield$db$query, rows;
-
+      var createQuery, grade, values;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, betyg)\n      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, betyg)\n      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n    ";
               grade = req.body.grade;
               console.log("GRADE:", grade);
               grade = parseInt(grade);
@@ -40,32 +39,30 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 10:
-              _yield$db$query = _context.sent;
-              rows = _yield$db$query.rows;
-              return _context.abrupt("return", res.status(201).send(rows[0]));
+              return _context.abrupt("return", res.status(201).end());
 
-            case 15:
-              _context.prev = 15;
+            case 13:
+              _context.prev = 13;
               _context.t0 = _context["catch"](7);
               console.log("Error in saveEpisode", _context.t0);
               return _context.abrupt("return", res.status(400).send(_context.t0));
 
-            case 19:
+            case 17:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[7, 15]]);
+      }, _callee, null, [[7, 13]]);
     }))();
   },
   gradeProgram: function gradeProgram(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var createQuery, grade, values, rows;
+      var createQuery, grade, values;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              createQuery = "\n      INSERT INTO programbetyg (anvandare, programid, programnamn, betyg)\n      VALUES (?, ?, ?, ?)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO programbetyg (anvandare, programid, programnamn, betyg)\n      VALUES (?, ?, ?, ?)\n    ";
               grade = req.body.grade;
               console.log("GRADE:", grade);
 
@@ -79,12 +76,11 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 8:
-              rows = _context2.sent;
-              console.log("Grade program worked and returned rows:", rows);
-              return _context2.abrupt("return", res.status(201).send(rows[0]));
+              console.log("Grade program worked");
+              return _context2.abrupt("return", res.status(201).end());
 
-            case 13:
-              _context2.prev = 13;
+            case 12:
+              _context2.prev = 12;
               _context2.t0 = _context2["catch"](5);
 
               if (_context2.t0.code === "23505") {
@@ -96,22 +92,22 @@ var Episode = {
               console.log("Grade program didn't work", _context2.t0);
               return _context2.abrupt("return", res.status(400).send(_context2.t0));
 
-            case 18:
+            case 17:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, null, [[5, 13]]);
+      }, _callee2, null, [[5, 12]]);
     }))();
   },
   updateProgram: function updateProgram(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-      var createQuery, grade, values, rows;
+      var createQuery, grade, values;
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              createQuery = "UPDATE programbetyg\n     SET betyg = ?\n     WHERE anvandare =?\n     AND programid = ?\n     RETURNING *  \n    ";
+              createQuery = "UPDATE programbetyg\n     SET betyg = ?\n     WHERE anvandare =?\n     AND programid = ?\n    ";
               grade = req.body.grade;
 
               if (!!grade) {
@@ -124,59 +120,57 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 7:
-              rows = _context3.sent;
-              console.log("Update program worked and returned rows:", rows);
-              return _context3.abrupt("return", res.status(201).send(rows[0]));
+              console.log("Update program worked");
+              return _context3.abrupt("return", res.status(200).end);
 
-            case 12:
-              _context3.prev = 12;
+            case 11:
+              _context3.prev = 11;
               _context3.t0 = _context3["catch"](4);
               console.log("Update program didn't work", _context3.t0);
               return _context3.abrupt("return", res.status(400).send(_context3.t0));
 
-            case 16:
+            case 15:
             case "end":
               return _context3.stop();
           }
         }
-      }, _callee3, null, [[4, 12]]);
+      }, _callee3, null, [[4, 11]]);
     }))();
   },
   deleteProgram: function deleteProgram(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-      var createQuery, values, rows;
+      var createQuery, values;
       return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              createQuery = " DELETE  from programbetyg \n      WHERE anvandare \n        LIKE ?\n      AND \n        programid LIKE ?\n      RETURNING *\n    ";
+              createQuery = " DELETE  from programbetyg \n      WHERE anvandare \n        LIKE ?\n      AND \n        programid LIKE ?\n    ";
               values = [req.user.username, req.body.program_id];
               _context4.prev = 2;
               _context4.next = 5;
               return _db["default"].query(createQuery, values);
 
             case 5:
-              rows = _context4.sent;
-              console.log("Delete program worked and returned rows:", rows);
-              return _context4.abrupt("return", res.status(201).send(rows[0]));
+              console.log("Delete program worked and returned rows:");
+              return _context4.abrupt("return", res.status(200).end());
 
-            case 10:
-              _context4.prev = 10;
+            case 9:
+              _context4.prev = 9;
               _context4.t0 = _context4["catch"](2);
               console.log("Delete program didn't work", _context4.t0);
               return _context4.abrupt("return", res.status(400).send(_context4.t0));
 
-            case 14:
+            case 13:
             case "end":
               return _context4.stop();
           }
         }
-      }, _callee4, null, [[2, 10]]);
+      }, _callee4, null, [[2, 9]]);
     }))();
   },
   getPrograms: function getPrograms(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-      var createQuery, values, _yield$db$query2, rows;
+      var createQuery, values, _yield$db$query, rows;
 
       return regeneratorRuntime.wrap(function _callee5$(_context5) {
         while (1) {
@@ -191,8 +185,8 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 7:
-              _yield$db$query2 = _context5.sent;
-              rows = _yield$db$query2.rows;
+              _yield$db$query = _context5.sent;
+              rows = _yield$db$query.rows;
               console.log("Rows inside list programs", rows);
               console.log("Next, comparing betyg inside get Programs");
               console.log("Sparade program", rows);
@@ -214,7 +208,7 @@ var Episode = {
   },
   listEpisodes: function listEpisodes(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-      var createQuery, values, _yield$db$query3, rows;
+      var createQuery, values, _yield$db$query2, rows;
 
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
@@ -229,8 +223,8 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 7:
-              _yield$db$query3 = _context6.sent;
-              rows = _yield$db$query3.rows;
+              _yield$db$query2 = _context6.sent;
+              rows = _yield$db$query2.rows;
               console.log("Rows inside list episodes", rows);
               console.log("Next, comparing betyg inside get Programs");
               console.log("Sparade avsnitt", rows);
@@ -252,46 +246,42 @@ var Episode = {
   },
   deleteEpisode: function deleteEpisode(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-      var createQuery, values, _yield$db$query4, rows;
-
+      var createQuery, values;
       return regeneratorRuntime.wrap(function _callee7$(_context7) {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
-              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare = ?\n      AND\n        avsnitt = ?\n      RETURNING *\n    ";
+              createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare = ?\n      AND\n        avsnitt = ?\n    ";
               values = [req.user.username, req.body.episode_id];
               _context7.prev = 2;
               _context7.next = 5;
               return _db["default"].query(createQuery, values);
 
             case 5:
-              _yield$db$query4 = _context7.sent;
-              rows = _yield$db$query4.rows;
-              return _context7.abrupt("return", res.status(200).send(rows[0]));
+              return _context7.abrupt("return", res.status(200).end());
 
-            case 10:
-              _context7.prev = 10;
+            case 8:
+              _context7.prev = 8;
               _context7.t0 = _context7["catch"](2);
               return _context7.abrupt("return", res.status(400).send(_context7.t0));
 
-            case 13:
+            case 11:
             case "end":
               return _context7.stop();
           }
         }
-      }, _callee7, null, [[2, 10]]);
+      }, _callee7, null, [[2, 8]]);
     }))();
   },
   setGrade: function setGrade(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
-      var createQuery, values, _yield$db$query5, rows;
-
+      var createQuery, values;
       return regeneratorRuntime.wrap(function _callee8$(_context8) {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
               console.log("Hello from setGrade in backend");
-              createQuery = "\n    UPDATE sparade_avsnitt\n    SET betyg = ?\n    WHERE\n      anvandare LIKE ?\n    AND\n      avsnitt = ?\n    RETURNING *\n   ";
+              createQuery = "\n    UPDATE sparade_avsnitt\n    SET betyg = ?\n    WHERE\n      anvandare LIKE ?\n    AND\n      avsnitt = ?\n   ";
               console.log("Running set grade in backend");
               values = [req.body.grade, req.user.username, req.body.episode_id];
               console.log("VAlues för grade, username och episode_id", values);
@@ -300,27 +290,25 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 8:
-              _yield$db$query5 = _context8.sent;
-              rows = _yield$db$query5.rows;
-              console.log("Betygsatt", rows);
-              return _context8.abrupt("return", res.status(200).send(rows));
+              console.log("Betygsatt");
+              return _context8.abrupt("return", res.status(200).end());
 
-            case 14:
-              _context8.prev = 14;
+            case 12:
+              _context8.prev = 12;
               _context8.t0 = _context8["catch"](5);
               return _context8.abrupt("return", res.status(400).send(_context8.t0));
 
-            case 17:
+            case 15:
             case "end":
               return _context8.stop();
           }
         }
-      }, _callee8, null, [[5, 14]]);
+      }, _callee8, null, [[5, 12]]);
     }))();
   },
   addTip: function addTip(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
-      var createQuery, values, createQuery2, createQuery3, values2, _yield$db$query6, tips, _yield$db$query7, tipTime, baseUrl, mailOptions;
+      var createQuery, values, createQuery2, createQuery3, values2, _yield$db$query3, tipTime, baseUrl, mailOptions;
 
       return regeneratorRuntime.wrap(function _callee11$(_context11) {
         while (1) {
@@ -328,7 +316,7 @@ var Episode = {
             case 0:
               console.log("req.body.username", req.body.username);
               console.log("req.body.episode_id", req.body.episode_id);
-              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)\n      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)\n      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n    ";
               values = [req.body.username, req.body.episode_id, req.body.title, req.body.show_name, req.body.show_id, req.body.description, req.body.url, req.body.listen_link, req.body.pub_date, req.user.username, true];
               createQuery2 = "select \n      EXTRACT(EPOCH FROM (current_timestamp - tipsad)) \n    AS difference, email, tips_mail \n      from anvandare\n    WHERE\n      anvandarnamn = ?\n    ";
               createQuery3 = "update anvandare\n      set tipsad = current_timestamp\n      where anvandarnamn = ?\n    ";
@@ -338,17 +326,15 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 10:
-              _yield$db$query6 = _context11.sent;
-              tips = _yield$db$query6.rows;
-              _context11.next = 14;
+              _context11.next = 12;
               return _db["default"].query(createQuery2, values2);
 
-            case 14:
-              _yield$db$query7 = _context11.sent;
-              tipTime = _yield$db$query7.rows;
+            case 12:
+              _yield$db$query3 = _context11.sent;
+              tipTime = _yield$db$query3.rows;
 
               if (!(tipTime[0].tips_mail && tipTime[0].email && (!tipTime[0].difference || tipTime[0].difference > 60 * 60 * 6))) {
-                _context11.next = 27;
+                _context11.next = 25;
                 break;
               }
 
@@ -362,11 +348,11 @@ var Episode = {
                 text: "Du har f\xE5tt nya lyssningstips!",
                 html: "<h3>Du har f\xE5tt nya lyssningstips! &nbsp;<strong><a href=\"www.radioskugga.org\">Radioskugga</a></strong></h3>"
               };
-              _context11.next = 23;
+              _context11.next = 21;
               return _db["default"].query(createQuery3, values2);
 
-            case 23:
-              _context11.next = 25;
+            case 21:
+              _context11.next = 23;
               return new Promise(function (resolve) {
                 return setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
                   return regeneratorRuntime.wrap(function _callee10$(_context10) {
@@ -417,33 +403,33 @@ var Episode = {
                 })), 15 * 60 * 1000);
               });
 
-            case 25:
-              _context11.next = 28;
+            case 23:
+              _context11.next = 26;
               break;
 
-            case 27:
+            case 25:
               console.log("Tip time difference not big enough", tipTime[0].difference);
 
-            case 28:
-              return _context11.abrupt("return", res.status(201).send(tips[0]));
+            case 26:
+              return _context11.abrupt("return", res.status(201).end());
 
-            case 31:
-              _context11.prev = 31;
+            case 29:
+              _context11.prev = 29;
               _context11.t0 = _context11["catch"](7);
               console.log("Error in addTip", _context11.t0);
               return _context11.abrupt("return", res.status(400).send(_context11.t0));
 
-            case 35:
+            case 33:
             case "end":
               return _context11.stop();
           }
         }
-      }, _callee11, null, [[7, 31]]);
+      }, _callee11, null, [[7, 29]]);
     }))();
   },
   getTips: function getTips(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
-      var createQuery1, createQuery2, values, _yield$db$query8, tipsReceived, _yield$db$query9, tipsSent;
+      var createQuery1, createQuery2, values, tipsReceived, _yield$db$query4, tipsSent;
 
       return regeneratorRuntime.wrap(function _callee12$(_context12) {
         while (1) {
@@ -459,14 +445,14 @@ var Episode = {
               return _db["default"].query(createQuery1, values);
 
             case 8:
-              _yield$db$query8 = _context12.sent;
-              tipsReceived = _yield$db$query8.rows;
+              tipsReceived = _context12.sent;
+              console.log(tipsReceived);
               _context12.next = 12;
               return _db["default"].query(createQuery2, values);
 
             case 12:
-              _yield$db$query9 = _context12.sent;
-              tipsSent = _yield$db$query9.rows;
+              _yield$db$query4 = _context12.sent;
+              tipsSent = _yield$db$query4.rows;
               console.log("tipsSent inside getTips", tipsSent);
               console.log("tipsReceived inside getTips", tipsReceived);
               return _context12.abrupt("return", res.status(200).send([tipsSent, tipsReceived]));
@@ -487,33 +473,30 @@ var Episode = {
   },
   setOldTips: function setOldTips(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
-      var createQuery, _yield$db$query10, rows;
-
+      var createQuery;
       return regeneratorRuntime.wrap(function _callee13$(_context13) {
         while (1) {
           switch (_context13.prev = _context13.next) {
             case 0:
-              createQuery = "\n      UPDATE sparade_avsnitt\n      SET\n        nytt_tips = FALSE\n      WHERE\n        anvandare = ?\n      RETURNING *\n    ";
+              createQuery = "\n      UPDATE sparade_avsnitt\n      SET\n        nytt_tips = FALSE\n      WHERE\n        anvandare = ?\n    ";
               _context13.next = 3;
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query10 = _context13.sent;
-              rows = _yield$db$query10.rows;
-              _context13.prev = 5;
-              return _context13.abrupt("return", res.status(204).send(rows));
+              _context13.prev = 3;
+              return _context13.abrupt("return", res.status(204).end());
 
-            case 9:
-              _context13.prev = 9;
-              _context13.t0 = _context13["catch"](5);
+            case 7:
+              _context13.prev = 7;
+              _context13.t0 = _context13["catch"](3);
               return _context13.abrupt("return", res.status(400).send(_context13.t0));
 
-            case 12:
+            case 10:
             case "end":
               return _context13.stop();
           }
         }
-      }, _callee13, null, [[5, 9]]);
+      }, _callee13, null, [[3, 7]]);
     }))();
   },
   removeAllTips: function removeAllTips(req, res) {

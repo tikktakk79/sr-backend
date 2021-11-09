@@ -15,9 +15,11 @@ const Auth = {
       return res.status(401).send({ message: "Token is not provided" })
     }
     try {
+      console.log("verifying token")
       const decoded = await jwt.verify(token, process.env.SECRET)
-      const text = "SELECT * FROM anvandare WHERE anvandarnamn = $1"
-      const { rows } = await db.query(text, [decoded.username])
+      const text = "SELECT * FROM anvandare WHERE anvandarnamn = ?"
+      const rows = await db.query(text, [decoded.username])
+      console.log("Token verification query worked")
       if (!rows[0]) {
         console.log("INVALID TOKEN PROVIDED!!!")
         return res

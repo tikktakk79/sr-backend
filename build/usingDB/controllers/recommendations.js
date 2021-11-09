@@ -16,39 +16,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 var Rec = {
   saveRec: function saveRec(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var createQuery, values, _yield$db$query, rows;
-
+      var createQuery, values;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              createQuery = "\n      INSERT INTO rekommendationer (tipsare, mottagare, beskrivning, avsnitt)\n      VALUES (?, ?, ?, ?)\n      RETURNING *\n    ";
+              createQuery = "\n      INSERT INTO rekommendationer (tipsare, mottagare, beskrivning, avsnitt)\n      VALUES (?, ?, ?, ?)\n    ";
               values = [req.body.sender, req.body.receiver, req.body.description, req.body.episode];
               _context.prev = 2;
               _context.next = 5;
               return _db["default"].query(createQuery, values);
 
             case 5:
-              _yield$db$query = _context.sent;
-              rows = _yield$db$query.rows;
-              return _context.abrupt("return", res.status(201).send(rows[0]));
+              return _context.abrupt("return", res.status(201).end());
 
-            case 10:
-              _context.prev = 10;
+            case 8:
+              _context.prev = 8;
               _context.t0 = _context["catch"](2);
               return _context.abrupt("return", res.status(400).send(_context.t0));
 
-            case 13:
+            case 11:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[2, 10]]);
+      }, _callee, null, [[2, 8]]);
     }))();
   },
   listRecs: function listRecs(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var createQuery, values, _yield$db$query2, rows;
+      var createQuery, values, _yield$db$query, rows;
 
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
@@ -61,8 +58,8 @@ var Rec = {
               return _db["default"].query(createQuery, values);
 
             case 5:
-              _yield$db$query2 = _context2.sent;
-              rows = _yield$db$query2.rows;
+              _yield$db$query = _context2.sent;
+              rows = _yield$db$query.rows;
               return _context2.abrupt("return", res.status(200).send(rows));
 
             case 10:
@@ -80,34 +77,31 @@ var Rec = {
   },
   deleteRec: function deleteRec(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-      var createQuery, values, _yield$db$query3, rows;
-
+      var createQuery, values;
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              createQuery = "\n      DELETE FROM rekommendationer\n      WHERE\n        mottagare = ?\n      AND\n        tipsare = ?\n      AND\n        avsnitt = ?\n      RETURNING *\n    ";
+              createQuery = "\n      DELETE FROM rekommendationer\n      WHERE\n        mottagare = ?\n      AND\n        tipsare = ?\n      AND\n        avsnitt = ?\n    ";
               values = [req.body.receiver, req.body.sender, req.body.episode];
               _context3.prev = 2;
               _context3.next = 5;
               return _db["default"].query(createQuery, values);
 
             case 5:
-              _yield$db$query3 = _context3.sent;
-              rows = _yield$db$query3.rows;
-              return _context3.abrupt("return", res.status(204).send());
+              return _context3.abrupt("return", res.status(204).end());
 
-            case 10:
-              _context3.prev = 10;
+            case 8:
+              _context3.prev = 8;
               _context3.t0 = _context3["catch"](2);
               return _context3.abrupt("return", res.status(400).send(_context3.t0));
 
-            case 13:
+            case 11:
             case "end":
               return _context3.stop();
           }
         }
-      }, _callee3, null, [[2, 10]]);
+      }, _callee3, null, [[2, 8]]);
     }))();
   }
 };

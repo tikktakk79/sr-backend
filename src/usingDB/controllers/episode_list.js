@@ -212,17 +212,16 @@ async gradeProgram(req, res) {
       anvandare LIKE ?
     AND
       avsnitt = ?
-    RETURNING *
    `
     console.log("Running set grade in backend")
     const values = [req.body.grade, req.user.username, req.body.episode_id]
 
     console.log("VAlues för grade, username och episode_id", values)
     try {
-      const { rows } = await db.query(createQuery, values)
+      await db.query(createQuery, values)
 
-      console.log("Betygsatt", rows)
-      return res.status(200).send(rows)
+      console.log("Betygsatt")
+      return res.status(200).end()
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -234,7 +233,6 @@ async gradeProgram(req, res) {
     const createQuery = `
       INSERT INTO sparade_avsnitt (anvandare, avsnitt, titel, program_namn, program_id, beskrivning, url, lyssningslank, pub_datum_utc, tipsare, nytt_tips)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      RETURNING *
     `
 
     const values = [
@@ -269,7 +267,7 @@ async gradeProgram(req, res) {
     const values2 = [req.body.username]
 
     try {
-      const { rows: tips } = await db.query(createQuery, values)
+      await db.query(createQuery, values)
       const { rows: tipTime } = await db.query(createQuery2, values2)
 
       if (tipTime[0].tips_mail && tipTime[0].email && (!tipTime[0].difference || tipTime[0].difference > 60 * 60 * 6 )) {
@@ -306,7 +304,7 @@ async gradeProgram(req, res) {
         console.log("Tip time difference not big enough", tipTime[0].difference );
       }
 
-      return res.status(201).send(tips[0])
+      return res.status(201).end()
     } catch (error) {
       console.log("Error in addTip", error)
       return res.status(400).send(error)
@@ -333,9 +331,11 @@ async gradeProgram(req, res) {
     const values = [req.user.username]
 
     try {
-     const {rows: tipsReceived}  = await db.query(createQuery1, values)
+    //  const {rows: tipsReceived}  = await db.query(createQuery1, values)
+     const tipsReceived = await db.query(createQuery1, values)
+     console.log(tipsReceived)
      
-     const {rows: tipsSent}  = await db.query(createQuery2, values)
+     const tipsSent  = await db.query(createQuery2, values)
 
       console.log("tipsSent inside getTips", tipsSent)
       console.log("tipsReceived inside getTips", tipsReceived)
@@ -353,12 +353,10 @@ async gradeProgram(req, res) {
         nytt_tips = FALSE
       WHERE
         anvandare = ?
-      RETURNING *
     `
-
-    const { rows } = await db.query(createQuery, [req.user.username])
+    await db.query(createQuery, [req.user.username])
     try {
-      return res.status(204).send(rows)
+      return res.status(204).end()
     } catch (error) {
       return res.status(400).send(error)
     }

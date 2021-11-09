@@ -43,7 +43,7 @@ var User = {
    */
   createUser: function createUser(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var hashPassword, removeDuplicate, createQuery, baseUrl, secretCode, values, rowsDuplicate, _yield$db$query, rows, _mailOptions;
+      var hashPassword, removeDuplicate, createQuery, baseUrl, secretCode, values, _mailOptions;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -68,36 +68,37 @@ var User = {
               // return res.status(201).send({ token })
 
               baseUrl = "https://" + req.get("host");
+
+              if (process.env.NODE_ENV = "development") {
+                baseUrl = "http://" + req.get("host");
+              }
+
               secretCode = _helper["default"].createVerificationToken(req.body.email);
               console.log("secret Code", secretCode);
               values = [req.body.username, req.body.firstname, req.body.lastname, req.body.email, hashPassword, //hashPassword
               secretCode];
-              _context.prev = 10;
-              _context.next = 13;
+              _context.prev = 11;
+              _context.next = 14;
               return _db["default"].query(removeDuplicate, [values[3]]);
 
-            case 13:
-              rowsDuplicate = _context.sent;
-              console.log("ROWSdupl", rowsDuplicate);
-              _context.next = 20;
+            case 14:
+              _context.next = 19;
               break;
 
-            case 17:
-              _context.prev = 17;
-              _context.t0 = _context["catch"](10);
+            case 16:
+              _context.prev = 16;
+              _context.t0 = _context["catch"](11);
               console.log("Error in register db query", _context.t0);
 
-            case 20:
-              _context.prev = 20;
+            case 19:
+              _context.prev = 19;
               console.log("Before create query in db");
-              _context.next = 24;
+              _context.next = 23;
               return _db["default"].query(createQuery, values);
 
-            case 24:
-              _yield$db$query = _context.sent;
-              rows = _yield$db$query.rows;
+            case 23:
               console.log("After create query");
-              _context.prev = 27;
+              _context.prev = 24;
               _mailOptions = {
                 from: process.env.EMAIL_ADDRESS,
                 to: req.body.email,
@@ -106,7 +107,7 @@ var User = {
                 html: "<p>Anv\xE4nd f\xF6ljande l\xE4nk f\xF6r att aktivera ditt konto p\xE5 Radioskugga: &nbsp;<strong></p><h3><a href=\"".concat(baseUrl, "/api/user/verification/verify-account/").concat(secretCode, "\" target=\"_blank\">Aktivera konto</a></strong></h3>")
               };
               console.log("Trying to send email");
-              _context.next = 32;
+              _context.next = 29;
               return _helper["default"].transporter.sendMail(_mailOptions, function (error, info) {
                 if (error) {
                   console.log("Error sending mail", error);
@@ -116,29 +117,28 @@ var User = {
                 }
               });
 
-            case 32:
+            case 29:
               console.log("Mail sent");
-              console.log("ROWS", rows);
-              _context.next = 39;
+              _context.next = 35;
               break;
 
-            case 36:
-              _context.prev = 36;
-              _context.t1 = _context["catch"](27);
+            case 32:
+              _context.prev = 32;
+              _context.t1 = _context["catch"](24);
               console.log("Error in register db query", _context.t1);
 
-            case 39:
-              _context.next = 49;
+            case 35:
+              _context.next = 45;
               break;
 
-            case 41:
-              _context.prev = 41;
-              _context.t2 = _context["catch"](20);
+            case 37:
+              _context.prev = 37;
+              _context.t2 = _context["catch"](19);
               console.log("rror routine", _context.t2.routine);
               console.log("Användarnamnet är upptaget");
 
               if (!(_context.t2.routine === "_bt_check_unique")) {
-                _context.next = 47;
+                _context.next = 43;
                 break;
               }
 
@@ -146,16 +146,16 @@ var User = {
                 message: "Username taken"
               }));
 
-            case 47:
+            case 43:
               console.log("Something failed and I don't know what!");
               return _context.abrupt("return", res.status(400).send(_context.t2));
 
-            case 49:
+            case 45:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[10, 17], [20, 41], [27, 36]]);
+      }, _callee, null, [[11, 16], [19, 37], [24, 32]]);
     }))();
   },
 
@@ -167,8 +167,7 @@ var User = {
    */
   loginUser: function loginUser(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var text, _yield$db$query2, rows, token;
-
+      var text, rows, token;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
@@ -185,41 +184,54 @@ var User = {
               }));
 
             case 3:
-              console.log("111We got to here!");
+              console.log("1We got to here!");
               text = "SELECT * FROM anvandare WHERE anvandarnamn = ?";
               _context2.prev = 5;
-              console.log("222We got to here!");
-              _context2.next = 9;
+              console.log("2We got to here!");
+              console.log("AND HERE");
+              console.log("UNAME", req.body.username);
+              _context2.prev = 9;
+              // rows = await db.query(text, [req.body.username])
+              console.log("Query text", text);
+              _context2.next = 13;
               return _db["default"].query(text, [req.body.username]);
 
-            case 9:
-              _yield$db$query2 = _context2.sent;
-              rows = _yield$db$query2.rows;
+            case 13:
+              rows = _context2.sent;
+              _context2.next = 19;
+              break;
+
+            case 16:
+              _context2.prev = 16;
+              _context2.t0 = _context2["catch"](9);
+              console.log("Error i login query", _context2.t0);
+
+            case 19:
               console.log("Queryn funkade här kommer rows", rows);
 
               if (rows[0]) {
-                _context2.next = 17;
+                _context2.next = 25;
                 break;
               }
 
               res.statusMessage = "No match for user in database";
               return _context2.abrupt("return", res.status(400).send());
 
-            case 17:
+            case 25:
               if (!(rows[0].status !== "member")) {
-                _context2.next = 20;
+                _context2.next = 28;
                 break;
               }
 
               res.statusMessage = "User not verified";
               return _context2.abrupt("return", res.status(400).send());
 
-            case 20:
+            case 28:
               console.log("333We got to here!");
               console.log("Användarnamn stämmer");
 
               if (_helper["default"].comparePassword(rows[0].losenord, req.body.password)) {
-                _context2.next = 26;
+                _context2.next = 34;
                 break;
               }
 
@@ -227,24 +239,25 @@ var User = {
               res.statusMessage = "Current password does not match";
               return _context2.abrupt("return", res.status(400).send());
 
-            case 26:
+            case 34:
               console.log("KOM enda hit");
               token = _helper["default"].generateToken(rows[0].anvandarnamn);
               return _context2.abrupt("return", res.status(200).send({
                 token: token
               }));
 
-            case 31:
-              _context2.prev = 31;
-              _context2.t0 = _context2["catch"](5);
-              return _context2.abrupt("return", res.status(400).send(_context2.t0));
+            case 39:
+              _context2.prev = 39;
+              _context2.t1 = _context2["catch"](5);
+              console.log("ERROR", _context2.t1);
+              return _context2.abrupt("return", res.status(400).send(_context2.t1));
 
-            case 34:
+            case 43:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, null, [[5, 31]]);
+      }, _callee2, null, [[5, 39], [9, 16]]);
     }))();
   },
 
@@ -256,25 +269,26 @@ var User = {
    */
   deleteUser: function deleteUser(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-      var deleteQuery, _yield$db$query3, rows;
+      var selectQuery, deleteQuery, _yield$db$query, rows;
 
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              deleteQuery = "DELETE FROM anvandare WHERE anvandarnamn=? returning *";
-              _context3.prev = 1;
-              _context3.next = 4;
+              selectQuery = "SELECT * FROM anvandare WHERE anvandarnamn=?";
+              deleteQuery = "DELETE FROM anvandare WHERE anvandarnamn=?";
+              _context3.prev = 2;
+              _context3.next = 5;
               return _db["default"].query(deleteQuery, [req.body.username
               /* req.user.username */
               ]);
 
-            case 4:
-              _yield$db$query3 = _context3.sent;
-              rows = _yield$db$query3.rows;
+            case 5:
+              _yield$db$query = _context3.sent;
+              rows = _yield$db$query.rows;
 
               if (rows[0]) {
-                _context3.next = 8;
+                _context3.next = 9;
                 break;
               }
 
@@ -282,20 +296,26 @@ var User = {
                 message: "Användare hittades ej"
               }));
 
-            case 8:
-              return _context3.abrupt("return", res.status(204).send());
+            case 9:
+              _context3.next = 11;
+              return _db["default"].query(deleteQuery, [req.body.username
+              /* req.user.username */
+              ]);
 
             case 11:
-              _context3.prev = 11;
-              _context3.t0 = _context3["catch"](1);
-              return _context3.abrupt("return", res.status(400).send(_context3.t0));
+              return _context3.abrupt("return", res.status(204).send());
 
             case 14:
+              _context3.prev = 14;
+              _context3.t0 = _context3["catch"](2);
+              return _context3.abrupt("return", res.status(400).send(_context3.t0));
+
+            case 17:
             case "end":
               return _context3.stop();
           }
         }
-      }, _callee3, null, [[1, 11]]);
+      }, _callee3, null, [[2, 14]]);
     }))();
   },
   updateUser: function updateUser(req, res) {
@@ -306,7 +326,7 @@ var User = {
           switch (_context4.prev = _context4.next) {
             case 0:
               console.log("Running user update on backend");
-              updateQuery = "UPDATE anvandare\n        SET (fornamn, efternamn, email) =\n        (?, ?, ?)\n        WHERE anvandarnamn=? returning *";
+              updateQuery = "UPDATE anvandare\n        SET (fornamn, efternamn, email) =\n        (?, ?, ?)\n        WHERE anvandarnamn=?";
               _context4.prev = 2;
               _context4.next = 5;
               return _db["default"].query(updateQuery, [req.body.firstname, req.body.lastname, req.body.email, req.user.username]);
@@ -329,7 +349,7 @@ var User = {
   },
   changePassword: function changePassword(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-      var text, _yield$db$query4, rows, passwordQuery, hashPassword;
+      var text, _yield$db$query2, rows, passwordQuery, hashPassword;
 
       return regeneratorRuntime.wrap(function _callee5$(_context5) {
         while (1) {
@@ -354,8 +374,8 @@ var User = {
               return _db["default"].query(text, [req.user.username]);
 
             case 8:
-              _yield$db$query4 = _context5.sent;
-              rows = _yield$db$query4.rows;
+              _yield$db$query2 = _context5.sent;
+              rows = _yield$db$query2.rows;
               console.log("Queryn funkade");
 
               if (rows[0]) {
@@ -416,7 +436,7 @@ var User = {
   },
   getUserData: function getUserData(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-      var createQuery, _yield$db$query5, rows;
+      var createQuery, _yield$db$query3, rows;
 
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
@@ -428,8 +448,8 @@ var User = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 4:
-              _yield$db$query5 = _context6.sent;
-              rows = _yield$db$query5.rows;
+              _yield$db$query3 = _context6.sent;
+              rows = _yield$db$query3.rows;
               console.log("Username to use", req.user.username);
               console.log("USER data to send: ", rows);
               return _context6.abrupt("return", res.status(201).send(rows));
@@ -449,7 +469,7 @@ var User = {
   },
   searchUsers: function searchUsers(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-      var createQuery, username, firstname, lastname, email, values, _yield$db$query6, rows, rowsMod;
+      var createQuery, username, firstname, lastname, email, values, _yield$db$query4, rows, rowsMod;
 
       return regeneratorRuntime.wrap(function _callee7$(_context7) {
         while (1) {
@@ -470,8 +490,8 @@ var User = {
               return _db["default"].query(createQuery, values);
 
             case 13:
-              _yield$db$query6 = _context7.sent;
-              rows = _yield$db$query6.rows;
+              _yield$db$query4 = _context7.sent;
+              rows = _yield$db$query4.rows;
               console.log("Rows from searchUsers", rows);
               rowsMod = rows.filter(function (row) {
                 return row.anvandarnamn !== req.user.username;
@@ -501,56 +521,57 @@ var User = {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
-              _context8.prev = 0;
-              _context8.next = 3;
+              console.log("Verifying account");
+              _context8.prev = 1;
+              _context8.next = 4;
               return _jsonwebtoken["default"].verify(req.params.secretCode, process.env.SECRET);
 
-            case 3:
+            case 4:
               decoded = _context8.sent;
-              _context8.next = 10;
+              _context8.next = 11;
               break;
 
-            case 6:
-              _context8.prev = 6;
-              _context8.t0 = _context8["catch"](0);
+            case 7:
+              _context8.prev = 7;
+              _context8.t0 = _context8["catch"](1);
               console.log("Error on /api/user/verification/verify-account: jwt verification ", _context8.t0);
               return _context8.abrupt("return", res.sendFile("verification-jwt-fail.html", {
                 root: path.join(__dirname, '../../../public')
               }));
 
-            case 10:
+            case 11:
               updateUser = "\n      UPDATE anvandare\n      SET \n        aktiveringskod = null,\n        status = 'member'\n      WHERE\n        aktiveringskod = ?\n      AND\n        email = ?\n    ";
               values = [req.params.secretCode, decoded.email];
-              _context8.prev = 12;
-              _context8.next = 15;
+              _context8.prev = 13;
+              _context8.next = 16;
               return _db["default"].query(updateUser, values);
 
-            case 15:
+            case 16:
               rows = _context8.sent;
               console.log("Rows from updateUser", rows);
-              _context8.next = 23;
+              _context8.next = 24;
               break;
 
-            case 19:
-              _context8.prev = 19;
-              _context8.t1 = _context8["catch"](12);
+            case 20:
+              _context8.prev = 20;
+              _context8.t1 = _context8["catch"](13);
               console.log("Error on /api/auth/verification/verify-account: ", _context8.t1);
               return _context8.abrupt("return", res.sendFile("verification-db-fail.html", {
                 root: path.join(__dirname, '../../../public')
               }));
 
-            case 23:
+            case 24:
               console.log("Verification success");
               res.sendFile("verification-success.html", {
                 root: path.join(__dirname, '../../../public')
               });
 
-            case 25:
+            case 26:
             case "end":
               return _context8.stop();
           }
         }
-      }, _callee8, null, [[0, 6], [12, 19]]);
+      }, _callee8, null, [[1, 7], [13, 20]]);
     }))();
   }
 };

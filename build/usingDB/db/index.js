@@ -52,11 +52,10 @@ var _default = {
               console.log("Query failed", err);
               reject(err);
             } else {
-              console.log("Query worked");
               resolve(rows);
             }
 
-            conn.release;
+            conn.release();
           });
         }
       });

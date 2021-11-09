@@ -25,8 +25,7 @@ var Auth = {
    */
   verifyToken: function verifyToken(req, res, next) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var token, decoded, text, _yield$db$query, rows;
-
+      var token, decoded, text, rows;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -44,21 +43,22 @@ var Auth = {
 
             case 3:
               _context.prev = 3;
-              _context.next = 6;
+              console.log("verifying token");
+              _context.next = 7;
               return _jsonwebtoken["default"].verify(token, process.env.SECRET);
 
-            case 6:
+            case 7:
               decoded = _context.sent;
-              text = "SELECT * FROM anvandare WHERE anvandarnamn = $1";
-              _context.next = 10;
+              text = "SELECT * FROM anvandare WHERE anvandarnamn = ?";
+              _context.next = 11;
               return _db["default"].query(text, [decoded.username]);
 
-            case 10:
-              _yield$db$query = _context.sent;
-              rows = _yield$db$query.rows;
+            case 11:
+              rows = _context.sent;
+              console.log("Token verification query worked");
 
               if (rows[0]) {
-                _context.next = 15;
+                _context.next = 16;
                 break;
               }
 
@@ -67,26 +67,26 @@ var Auth = {
                 message: "The token you provided is invalid"
               }));
 
-            case 15:
+            case 16:
               req.user = {
                 username: decoded.username
               };
               next();
-              _context.next = 23;
+              _context.next = 24;
               break;
 
-            case 19:
-              _context.prev = 19;
+            case 20:
+              _context.prev = 20;
               _context.t0 = _context["catch"](3);
               console.log("Some unidentified error in token verification");
               return _context.abrupt("return", res.status(400).send(_context.t0));
 
-            case 23:
+            case 24:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[3, 19]]);
+      }, _callee, null, [[3, 20]]);
     }))();
   }
 };

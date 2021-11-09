@@ -95,10 +95,14 @@ const Friend = {
     `
 
     console.log("Önska mig lycka till innan jag försöker lista vännerna!")
-    const values = [req.user.username]
+    const values = [req.user.username, req.user.username]
 
     try {
-      const { rows, rowCount } = await db.query(createQuery, values)
+      const queryResp = await db.query(createQuery, values)
+
+      console.log("queryResp in listFriends", queryResp)
+
+      const { rows, rowCount } = queryResp
 
       console.log("RÖUUWS", rows)
       let friendsMod = helper.userRelations(req.user.username, rows)
@@ -159,7 +163,7 @@ const Friend = {
         godkann = ?
     `
 
-    const { rows } = await db.query(createQuery, [req.user.username])
+    await db.query(createQuery, [req.user.username])
     try {
       return res.status(204).end()
     } catch (error) {
