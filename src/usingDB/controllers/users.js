@@ -233,7 +233,7 @@ const User = {
     const text = "SELECT * FROM anvandare WHERE anvandarnamn = ?"
 
     try {
-      const { rows } = await db.query(text, [req.user.username])
+      const rows = await db.query(text, [req.user.username])
       console.log("Queryn funkade")
       if (!rows[0]) {
         return res
@@ -290,8 +290,8 @@ const User = {
     console.log("Searching for users")
     const createQuery = `SELECT anvandarnamn, hemligt FROM anvandare
     WHERE
-      anvandarnamn ILIKE
-        ?
+      anvandarnamn LIKE
+        LOWER(?)
    `
 
     console.log("QUERY", req.query)
@@ -307,7 +307,7 @@ const User = {
     console.log("VALUES", values)
 
     try {
-      const { rows } = await db.query(createQuery, values)
+      const rows = await db.query(createQuery, values)
       console.log("Rows from searchUsers", rows);
       let rowsMod = rows.filter((row) => row.anvandarnamn !== req.user.username)
       return res.status(201).send(rowsMod)

@@ -32,7 +32,7 @@ const Rec = {
     const values = [req.body.username]
 
     try {
-      const { rows } = await db.query(createQuery, values)
+      const rows = await db.query(createQuery, values)
       return res.status(200).send(rows)
     } catch (error) {
       return res.status(400).send(error)

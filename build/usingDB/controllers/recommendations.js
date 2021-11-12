@@ -45,8 +45,7 @@ var Rec = {
   },
   listRecs: function listRecs(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var createQuery, values, _yield$db$query, rows;
-
+      var createQuery, values, rows;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
@@ -58,21 +57,20 @@ var Rec = {
               return _db["default"].query(createQuery, values);
 
             case 5:
-              _yield$db$query = _context2.sent;
-              rows = _yield$db$query.rows;
+              rows = _context2.sent;
               return _context2.abrupt("return", res.status(200).send(rows));
 
-            case 10:
-              _context2.prev = 10;
+            case 9:
+              _context2.prev = 9;
               _context2.t0 = _context2["catch"](2);
               return _context2.abrupt("return", res.status(400).send(_context2.t0));
 
-            case 13:
+            case 12:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, null, [[2, 10]]);
+      }, _callee2, null, [[2, 9]]);
     }))();
   },
   deleteRec: function deleteRec(req, res) {

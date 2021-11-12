@@ -95,13 +95,13 @@ async gradeProgram(req, res) {
     const values = [
       grade,
       req.user.username,
-      req.body.program_id, 
+      req.body.program_id 
     ]
 
     try {
       await db.query(createQuery, values)
       console.log("Update program worked")
-      return res.status(200).end
+      return res.status(200).end()
     } catch (error) {
       console.log("Update program didn't work", error)
       return res.status(400).send(error)
@@ -144,7 +144,7 @@ async gradeProgram(req, res) {
     const values = [req.user.username]
 
     try {
-      const { rows } = await db.query(createQuery, values)
+      const rows  = await db.query(createQuery, values)
 
       console.log("Rows inside list programs", rows)
       console.log("Next, comparing betyg inside get Programs")
@@ -163,14 +163,14 @@ async gradeProgram(req, res) {
     WHERE
       anvandare LIKE ?
     AND 
-      tipsare IS null
+      tipsare IS NULL
    `
     console.log("USER data:", req.user)
     console.log("RUnning get episodes in backend")
     const values = [req.user.username]
 
     try {
-      const { rows } = await db.query(createQuery, values)
+      const rows = await db.query(createQuery, values)
 
       console.log("Rows inside list episodes", rows)
       console.log("Next, comparing betyg inside get Programs")

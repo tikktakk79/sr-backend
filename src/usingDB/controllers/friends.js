@@ -16,11 +16,11 @@ const Friend = {
       ;
     `
 
-    const values = [req.user.username, req.body.receiver]
+    const values = [req.user.username, req.body.receiver,req.user.username, req.body.receiver]
     try {
       await db.query(createQuery, values)
 
-      const {rows}  = await db.query(createQuery2, values)
+      const rows  = await db.query(createQuery2, values)
 
       console.log("rows2 from addFriend", rows)
 
@@ -31,21 +31,24 @@ const Friend = {
     }
   },
 
+
   async acceptFriend(req, res) {
+    console.log("Running acceept friend")
+    console.log("acceptfriend user", req.user.username)
+    console.log("acceptfriend receiver", req.body.receiver)
     const createQuery = `
       UPDATE vanner
       SET godkann = null,
-      ny_fraga = FALSE
-      WHERE anvandare1 = ?
-        OR anvandare2 = ?
+      ny_fraga = false
+      WHERE (anvandare1 = ? AND anvandare2 = ?)
+        OR (anvandare2 = ? AND anvandare1 = ?)
         AND godkann = ?
-      RETURNING *
     `
 
-    const values = [req.user.username, req.body.receiver]
+    const values = [req.user.username, req.body.receiver, req.user.username, req.body.receiver, req.user.username]
 
     try {
-      const { rows, rowCount } = await db.query(createQuery, values)
+      await db.query(createQuery, values)
       return res.status(200).end()
     } catch (error) {
       return res.status(400).send(error)
@@ -87,27 +90,27 @@ const Friend = {
     ON
       anvandare2 = anv2.anvandarnamn
     WHERE
-      anv1.anvandarnamn = ?
+      vanner.anvandare1 = ?
     OR
-      anv2.anvandarnamn = ?
+      vanner.anvandare2 = ?
     ;
-
     `
 
     console.log("Önska mig lycka till innan jag försöker lista vännerna!")
     const values = [req.user.username, req.user.username]
 
     try {
-      const queryResp = await db.query(createQuery, values)
+      const rows = await db.query(createQuery, values)
 
-      console.log("queryResp in listFriends", queryResp)
+      console.log("rows in listFriends", rows)
 
-      const { rows, rowCount } = queryResp
+      const rowCount = rows.length
 
       console.log("RÖUUWS", rows)
       let friendsMod = helper.userRelations(req.user.username, rows)
       return res.status(200).send({ friendsMod, rowCount })
     } catch (error) {
+      console.log("Error listing friends")
       return res.status(400).send(error)
     }
   },
@@ -135,7 +138,9 @@ const Friend = {
       console.log("Other uname", req.body.receiver)
       const rows = await db.query(selectQuery, [
         req.user.username,
-        req.body.receiver
+        req.body.receiver,
+        req.user.username,
+        req.body.receiver,
       ])
 
 
@@ -146,7 +151,9 @@ const Friend = {
 
       await db.query(deleteQuery, [
         req.user.username,
-        req.body.receiver
+        req.body.receiver,
+        req.user.username,
+        req.body.receiver,
       ])
       return res.status(204).send()
     } catch (error) {
@@ -196,7 +203,7 @@ const Friend = {
 
     console.log("SECRET from backend", req.body.secret)
 
-    const { rows } = await db.query(createQuery, [
+    await db.query(createQuery, [
       req.user.username,
       req.body.secret
     ])
@@ -215,7 +222,7 @@ const Friend = {
         anvandarnamn = ?
     `
 
-    const { rows } = await db.query(createQuery, [req.user.username])
+    const rows= await db.query(createQuery, [req.user.username])
     try {
       console.log("Got tips_mail from user in db", rows)
       return res.status(200).send(rows)

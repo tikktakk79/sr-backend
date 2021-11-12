@@ -349,8 +349,7 @@ var User = {
   },
   changePassword: function changePassword(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-      var text, _yield$db$query2, rows, passwordQuery, hashPassword;
-
+      var text, rows, passwordQuery, hashPassword;
       return regeneratorRuntime.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
@@ -374,12 +373,11 @@ var User = {
               return _db["default"].query(text, [req.user.username]);
 
             case 8:
-              _yield$db$query2 = _context5.sent;
-              rows = _yield$db$query2.rows;
+              rows = _context5.sent;
               console.log("Queryn funkade");
 
               if (rows[0]) {
-                _context5.next = 13;
+                _context5.next = 12;
                 break;
               }
 
@@ -387,11 +385,11 @@ var User = {
                 message: "Inloggningsuppgifterna du angav är felaktiga"
               }));
 
-            case 13:
+            case 12:
               console.log("333We got to here!");
 
               if (_helper["default"].comparePassword(rows[0].losenord, req.body.password)) {
-                _context5.next = 17;
+                _context5.next = 16;
                 break;
               }
 
@@ -400,43 +398,43 @@ var User = {
                 message: "badPassword"
               }));
 
-            case 17:
+            case 16:
               console.log("KOM enda hit, lösenordet stämmer");
               passwordQuery = "UPDATE anvandare\n          SET losenord = ?\n          WHERE anvandarnamn=?";
               hashPassword = _helper["default"].hashPassword(req.body.newPassword);
-              _context5.prev = 20;
-              _context5.next = 23;
+              _context5.prev = 19;
+              _context5.next = 22;
               return _db["default"].query(passwordQuery, [hashPassword, req.user.username]);
 
-            case 23:
+            case 22:
               console.log("Lösenord bytt");
               return _context5.abrupt("return", res.status(204).send());
 
-            case 27:
-              _context5.prev = 27;
-              _context5.t0 = _context5["catch"](20);
+            case 26:
+              _context5.prev = 26;
+              _context5.t0 = _context5["catch"](19);
               return _context5.abrupt("return", res.status(400).send(_context5.t0));
 
-            case 30:
-              _context5.next = 35;
+            case 29:
+              _context5.next = 34;
               break;
 
-            case 32:
-              _context5.prev = 32;
+            case 31:
+              _context5.prev = 31;
               _context5.t1 = _context5["catch"](5);
               return _context5.abrupt("return", res.status(400).send(_context5.t1));
 
-            case 35:
+            case 34:
             case "end":
               return _context5.stop();
           }
         }
-      }, _callee5, null, [[5, 32], [20, 27]]);
+      }, _callee5, null, [[5, 31], [19, 26]]);
     }))();
   },
   getUserData: function getUserData(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-      var createQuery, _yield$db$query3, rows;
+      var createQuery, _yield$db$query2, rows;
 
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
@@ -448,8 +446,8 @@ var User = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 4:
-              _yield$db$query3 = _context6.sent;
-              rows = _yield$db$query3.rows;
+              _yield$db$query2 = _context6.sent;
+              rows = _yield$db$query2.rows;
               console.log("Username to use", req.user.username);
               console.log("USER data to send: ", rows);
               return _context6.abrupt("return", res.status(201).send(rows));
@@ -469,14 +467,13 @@ var User = {
   },
   searchUsers: function searchUsers(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-      var createQuery, username, firstname, lastname, email, values, _yield$db$query4, rows, rowsMod;
-
+      var createQuery, username, firstname, lastname, email, values, rows, rowsMod;
       return regeneratorRuntime.wrap(function _callee7$(_context7) {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
               console.log("Searching for users");
-              createQuery = "SELECT anvandarnamn, hemligt FROM anvandare\n    WHERE\n      anvandarnamn ILIKE\n        ?\n   ";
+              createQuery = "SELECT anvandarnamn, hemligt FROM anvandare\n    WHERE\n      anvandarnamn LIKE\n        LOWER(?)\n   ";
               console.log("QUERY", req.query);
               console.log("QUERY FIRSTNAME", req.query.firstname);
               username = req.query.username || "";
@@ -490,25 +487,24 @@ var User = {
               return _db["default"].query(createQuery, values);
 
             case 13:
-              _yield$db$query4 = _context7.sent;
-              rows = _yield$db$query4.rows;
+              rows = _context7.sent;
               console.log("Rows from searchUsers", rows);
               rowsMod = rows.filter(function (row) {
                 return row.anvandarnamn !== req.user.username;
               });
               return _context7.abrupt("return", res.status(201).send(rowsMod));
 
-            case 20:
-              _context7.prev = 20;
+            case 19:
+              _context7.prev = 19;
               _context7.t0 = _context7["catch"](10);
               return _context7.abrupt("return", res.status(400).send(_context7.t0));
 
-            case 23:
+            case 22:
             case "end":
               return _context7.stop();
           }
         }
-      }, _callee7, null, [[10, 20]]);
+      }, _callee7, null, [[10, 19]]);
     }))();
   },
   // #route:  GET /verification/verify-account

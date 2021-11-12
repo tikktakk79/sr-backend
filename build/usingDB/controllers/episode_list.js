@@ -121,7 +121,7 @@ var Episode = {
 
             case 7:
               console.log("Update program worked");
-              return _context3.abrupt("return", res.status(200).end);
+              return _context3.abrupt("return", res.status(200).end());
 
             case 11:
               _context3.prev = 11;
@@ -170,8 +170,7 @@ var Episode = {
   },
   getPrograms: function getPrograms(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-      var createQuery, values, _yield$db$query, rows;
-
+      var createQuery, values, rows;
       return regeneratorRuntime.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
@@ -185,36 +184,34 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 7:
-              _yield$db$query = _context5.sent;
-              rows = _yield$db$query.rows;
+              rows = _context5.sent;
               console.log("Rows inside list programs", rows);
               console.log("Next, comparing betyg inside get Programs");
               console.log("Sparade program", rows);
               return _context5.abrupt("return", res.status(200).send(rows));
 
-            case 15:
-              _context5.prev = 15;
+            case 14:
+              _context5.prev = 14;
               _context5.t0 = _context5["catch"](4);
               console.log("Fel i get programs", _context5.t0);
               return _context5.abrupt("return", res.status(400).send(_context5.t0));
 
-            case 19:
+            case 18:
             case "end":
               return _context5.stop();
           }
         }
-      }, _callee5, null, [[4, 15]]);
+      }, _callee5, null, [[4, 14]]);
     }))();
   },
   listEpisodes: function listEpisodes(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-      var createQuery, values, _yield$db$query2, rows;
-
+      var createQuery, values, rows;
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              createQuery = "\n    SELECT * FROM sparade_avsnitt\n    WHERE\n      anvandare LIKE ?\n    AND \n      tipsare IS null\n   ";
+              createQuery = "\n    SELECT * FROM sparade_avsnitt\n    WHERE\n      anvandare LIKE ?\n    AND \n      tipsare IS NULL\n   ";
               console.log("USER data:", req.user);
               console.log("RUnning get episodes in backend");
               values = [req.user.username];
@@ -223,25 +220,24 @@ var Episode = {
               return _db["default"].query(createQuery, values);
 
             case 7:
-              _yield$db$query2 = _context6.sent;
-              rows = _yield$db$query2.rows;
+              rows = _context6.sent;
               console.log("Rows inside list episodes", rows);
               console.log("Next, comparing betyg inside get Programs");
               console.log("Sparade avsnitt", rows);
               return _context6.abrupt("return", res.status(200).send(rows));
 
-            case 15:
-              _context6.prev = 15;
+            case 14:
+              _context6.prev = 14;
               _context6.t0 = _context6["catch"](4);
               console.log("Fel i get episodes", _context6.t0);
               return _context6.abrupt("return", res.status(400).send(_context6.t0));
 
-            case 19:
+            case 18:
             case "end":
               return _context6.stop();
           }
         }
-      }, _callee6, null, [[4, 15]]);
+      }, _callee6, null, [[4, 14]]);
     }))();
   },
   deleteEpisode: function deleteEpisode(req, res) {
@@ -308,7 +304,7 @@ var Episode = {
   },
   addTip: function addTip(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
-      var createQuery, values, createQuery2, createQuery3, values2, _yield$db$query3, tipTime, baseUrl, mailOptions;
+      var createQuery, values, createQuery2, createQuery3, values2, _yield$db$query, tipTime, baseUrl, mailOptions;
 
       return regeneratorRuntime.wrap(function _callee11$(_context11) {
         while (1) {
@@ -330,8 +326,8 @@ var Episode = {
               return _db["default"].query(createQuery2, values2);
 
             case 12:
-              _yield$db$query3 = _context11.sent;
-              tipTime = _yield$db$query3.rows;
+              _yield$db$query = _context11.sent;
+              tipTime = _yield$db$query.rows;
 
               if (!(tipTime[0].tips_mail && tipTime[0].email && (!tipTime[0].difference || tipTime[0].difference > 60 * 60 * 6))) {
                 _context11.next = 25;
@@ -429,8 +425,7 @@ var Episode = {
   },
   getTips: function getTips(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
-      var createQuery1, createQuery2, values, tipsReceived, _yield$db$query4, tipsSent;
-
+      var createQuery1, createQuery2, values, tipsReceived, tipsSent;
       return regeneratorRuntime.wrap(function _callee12$(_context12) {
         while (1) {
           switch (_context12.prev = _context12.next) {
@@ -451,24 +446,23 @@ var Episode = {
               return _db["default"].query(createQuery2, values);
 
             case 12:
-              _yield$db$query4 = _context12.sent;
-              tipsSent = _yield$db$query4.rows;
+              tipsSent = _context12.sent;
               console.log("tipsSent inside getTips", tipsSent);
               console.log("tipsReceived inside getTips", tipsReceived);
               return _context12.abrupt("return", res.status(200).send([tipsSent, tipsReceived]));
 
-            case 19:
-              _context12.prev = 19;
+            case 18:
+              _context12.prev = 18;
               _context12.t0 = _context12["catch"](5);
               console.log("Fel i getTips", _context12.t0);
               return _context12.abrupt("return", res.status(400).send(_context12.t0));
 
-            case 23:
+            case 22:
             case "end":
               return _context12.stop();
           }
         }
-      }, _callee12, null, [[5, 19]]);
+      }, _callee12, null, [[5, 18]]);
     }))();
   },
   setOldTips: function setOldTips(req, res) {

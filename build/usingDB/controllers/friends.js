@@ -26,15 +26,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 var Friend = {
   addFriend: function addFriend(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var createQuery, createQuery2, values, _yield$db$query, rows;
-
+      var createQuery, createQuery2, values, rows;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               createQuery = "\n      CALL ny_van(?, ?);\n    ";
               createQuery2 = "\n      SELECT * FROM vanner WHERE \n        anvandare1 = LEAST(?, ?)\n      AND\n        anvandare2 = GREATEST(?, ?)\n      ;\n    ";
-              values = [req.user.username, req.body.receiver];
+              values = [req.user.username, req.body.receiver, req.user.username, req.body.receiver];
               _context.prev = 3;
               _context.next = 6;
               return _db["default"].query(createQuery, values);
@@ -44,48 +43,46 @@ var Friend = {
               return _db["default"].query(createQuery2, values);
 
             case 8:
-              _yield$db$query = _context.sent;
-              rows = _yield$db$query.rows;
+              rows = _context.sent;
               console.log("rows2 from addFriend", rows);
               return _context.abrupt("return", res.status(200).send(rows));
 
-            case 14:
-              _context.prev = 14;
+            case 13:
+              _context.prev = 13;
               _context.t0 = _context["catch"](3);
               console.log("NE DE gickk inte..");
               return _context.abrupt("return", res.status(400).send(_context.t0));
 
-            case 18:
+            case 17:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[3, 14]]);
+      }, _callee, null, [[3, 13]]);
     }))();
   },
   acceptFriend: function acceptFriend(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var createQuery, values, _yield$db$query2, rows, rowCount;
-
+      var createQuery, values;
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              createQuery = "\n      UPDATE vanner\n      SET godkann = null,\n      ny_fraga = FALSE\n      WHERE anvandare1 = ?\n        OR anvandare2 = ?\n        AND godkann = ?\n      RETURNING *\n    ";
-              values = [req.user.username, req.body.receiver];
-              _context2.prev = 2;
-              _context2.next = 5;
+              console.log("Running acceept friend");
+              console.log("acceptfriend user", req.user.username);
+              console.log("acceptfriend receiver", req.body.receiver);
+              createQuery = "\n      UPDATE vanner\n      SET godkann = null,\n      ny_fraga = false\n      WHERE (anvandare1 = ? AND anvandare2 = ?)\n        OR (anvandare2 = ? AND anvandare1 = ?)\n        AND godkann = ?\n    ";
+              values = [req.user.username, req.body.receiver, req.user.username, req.body.receiver, req.user.username];
+              _context2.prev = 5;
+              _context2.next = 8;
               return _db["default"].query(createQuery, values);
 
-            case 5:
-              _yield$db$query2 = _context2.sent;
-              rows = _yield$db$query2.rows;
-              rowCount = _yield$db$query2.rowCount;
+            case 8:
               return _context2.abrupt("return", res.status(200).end());
 
             case 11:
               _context2.prev = 11;
-              _context2.t0 = _context2["catch"](2);
+              _context2.t0 = _context2["catch"](5);
               return _context2.abrupt("return", res.status(400).send(_context2.t0));
 
             case 14:
@@ -93,12 +90,12 @@ var Friend = {
               return _context2.stop();
           }
         }
-      }, _callee2, null, [[2, 11]]);
+      }, _callee2, null, [[5, 11]]);
     }))();
   },
   waitFriend: function waitFriend(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-      var createQuery, values, _yield$db$query3, rows, rowCount;
+      var createQuery, values, _yield$db$query, rows, rowCount;
 
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
@@ -111,9 +108,9 @@ var Friend = {
               return _db["default"].query(createQuery, values);
 
             case 5:
-              _yield$db$query3 = _context3.sent;
-              rows = _yield$db$query3.rows;
-              rowCount = _yield$db$query3.rowCount;
+              _yield$db$query = _context3.sent;
+              rows = _yield$db$query.rows;
+              rowCount = _yield$db$query.rowCount;
               return _context3.abrupt("return", res.status(200).end());
 
             case 11:
@@ -131,13 +128,13 @@ var Friend = {
   },
   listFriends: function listFriends(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-      var createQuery, values, queryResp, rows, rowCount, friendsMod;
+      var createQuery, values, rows, rowCount, friendsMod;
       return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
               console.log("Running list friends from backend");
-              createQuery = "\n    SELECT\n      id, vanner.anvandare1, vanner.anvandare2, vanner.godkann, vanner.ny_fraga, anv1.fornamn AS fnamn1, anv1.efternamn AS enamn1, anv1.email AS email1, anv1.hemligt AS hemligt1, anv2.fornamn AS fnamn2, anv2.efternamn AS enamn2, anv2.email AS email2, anv2.hemligt AS hemligt2\n    FROM\n      vanner\n    JOIN\n      anvandare AS anv1\n    ON\n      anvandare1 = anvandarnamn\n    JOIN\n      anvandare AS anv2\n    ON\n      anvandare2 = anv2.anvandarnamn\n    WHERE\n      anv1.anvandarnamn = ?\n    OR\n      anv2.anvandarnamn = ?\n    ;\n\n    ";
+              createQuery = "\n    SELECT\n      id, vanner.anvandare1, vanner.anvandare2, vanner.godkann, vanner.ny_fraga, anv1.fornamn AS fnamn1, anv1.efternamn AS enamn1, anv1.email AS email1, anv1.hemligt AS hemligt1, anv2.fornamn AS fnamn2, anv2.efternamn AS enamn2, anv2.email AS email2, anv2.hemligt AS hemligt2\n    FROM\n      vanner\n    JOIN\n      anvandare AS anv1\n    ON\n      anvandare1 = anvandarnamn\n    JOIN\n      anvandare AS anv2\n    ON\n      anvandare2 = anv2.anvandarnamn\n    WHERE\n      vanner.anvandare1 = ?\n    OR\n      vanner.anvandare2 = ?\n    ;\n    ";
               console.log("Önska mig lycka till innan jag försöker lista vännerna!");
               values = [req.user.username, req.user.username];
               _context4.prev = 4;
@@ -145,9 +142,9 @@ var Friend = {
               return _db["default"].query(createQuery, values);
 
             case 7:
-              queryResp = _context4.sent;
-              console.log("queryResp in listFriends", queryResp);
-              rows = queryResp.rows, rowCount = queryResp.rowCount;
+              rows = _context4.sent;
+              console.log("rows in listFriends", rows);
+              rowCount = rows.length;
               console.log("RÖUUWS", rows);
               friendsMod = _helper["default"].userRelations(req.user.username, rows);
               return _context4.abrupt("return", res.status(200).send({
@@ -158,9 +155,10 @@ var Friend = {
             case 15:
               _context4.prev = 15;
               _context4.t0 = _context4["catch"](4);
+              console.log("Error listing friends");
               return _context4.abrupt("return", res.status(400).send(_context4.t0));
 
-            case 18:
+            case 19:
             case "end":
               return _context4.stop();
           }
@@ -182,7 +180,7 @@ var Friend = {
               console.log("Mu uname", req.user.username);
               console.log("Other uname", req.body.receiver);
               _context5.next = 8;
-              return _db["default"].query(selectQuery, [req.user.username, req.body.receiver]);
+              return _db["default"].query(selectQuery, [req.user.username, req.body.receiver, req.user.username, req.body.receiver]);
 
             case 8:
               rows = _context5.sent;
@@ -198,7 +196,7 @@ var Friend = {
 
             case 11:
               _context5.next = 13;
-              return _db["default"].query(deleteQuery, [req.user.username, req.body.receiver]);
+              return _db["default"].query(deleteQuery, [req.user.username, req.body.receiver, req.user.username, req.body.receiver]);
 
             case 13:
               return _context5.abrupt("return", res.status(204).send());
@@ -218,8 +216,7 @@ var Friend = {
   },
   setOld: function setOld(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-      var createQuery, _yield$db$query4, rows;
-
+      var createQuery;
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
           switch (_context6.prev = _context6.next) {
@@ -229,27 +226,25 @@ var Friend = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query4 = _context6.sent;
-              rows = _yield$db$query4.rows;
-              _context6.prev = 5;
+              _context6.prev = 3;
               return _context6.abrupt("return", res.status(204).end());
 
-            case 9:
-              _context6.prev = 9;
-              _context6.t0 = _context6["catch"](5);
+            case 7:
+              _context6.prev = 7;
+              _context6.t0 = _context6["catch"](3);
               return _context6.abrupt("return", res.status(400).send(_context6.t0));
 
-            case 12:
+            case 10:
             case "end":
               return _context6.stop();
           }
         }
-      }, _callee6, null, [[5, 9]]);
+      }, _callee6, null, [[3, 7]]);
     }))();
   },
   getSecret: function getSecret(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-      var createQuery, _yield$db$query5, rows;
+      var createQuery, _yield$db$query2, rows;
 
       return regeneratorRuntime.wrap(function _callee7$(_context7) {
         while (1) {
@@ -260,8 +255,8 @@ var Friend = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query5 = _context7.sent;
-              rows = _yield$db$query5.rows;
+              _yield$db$query2 = _context7.sent;
+              rows = _yield$db$query2.rows;
               _context7.prev = 5;
               console.log("Got hemligt from user in db", rows);
               return _context7.abrupt("return", res.status(200).send(rows));
@@ -281,8 +276,7 @@ var Friend = {
   },
   setSecret: function setSecret(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
-      var createQuery, _yield$db$query6, rows;
-
+      var createQuery;
       return regeneratorRuntime.wrap(function _callee8$(_context8) {
         while (1) {
           switch (_context8.prev = _context8.next) {
@@ -293,29 +287,26 @@ var Friend = {
               return _db["default"].query(createQuery, [req.user.username, req.body.secret]);
 
             case 4:
-              _yield$db$query6 = _context8.sent;
-              rows = _yield$db$query6.rows;
-              _context8.prev = 6;
+              _context8.prev = 4;
               console.log("Set hemligt");
               return _context8.abrupt("return", res.status(200).end());
 
-            case 11:
-              _context8.prev = 11;
-              _context8.t0 = _context8["catch"](6);
+            case 9:
+              _context8.prev = 9;
+              _context8.t0 = _context8["catch"](4);
               return _context8.abrupt("return", res.status(400).send(_context8.t0));
 
-            case 14:
+            case 12:
             case "end":
               return _context8.stop();
           }
         }
-      }, _callee8, null, [[6, 11]]);
+      }, _callee8, null, [[4, 9]]);
     }))();
   },
   getTipsMail: function getTipsMail(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
-      var createQuery, _yield$db$query7, rows;
-
+      var createQuery, rows;
       return regeneratorRuntime.wrap(function _callee9$(_context9) {
         while (1) {
           switch (_context9.prev = _context9.next) {
@@ -325,23 +316,22 @@ var Friend = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query7 = _context9.sent;
-              rows = _yield$db$query7.rows;
-              _context9.prev = 5;
+              rows = _context9.sent;
+              _context9.prev = 4;
               console.log("Got tips_mail from user in db", rows);
               return _context9.abrupt("return", res.status(200).send(rows));
 
-            case 10:
-              _context9.prev = 10;
-              _context9.t0 = _context9["catch"](5);
+            case 9:
+              _context9.prev = 9;
+              _context9.t0 = _context9["catch"](4);
               return _context9.abrupt("return", res.status(400).send(_context9.t0));
 
-            case 13:
+            case 12:
             case "end":
               return _context9.stop();
           }
         }
-      }, _callee9, null, [[5, 10]]);
+      }, _callee9, null, [[4, 9]]);
     }))();
   },
   setTipsMail: function setTipsMail(req, res) {
