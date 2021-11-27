@@ -49,11 +49,8 @@ const User = {
     // req.session.token = token
     // return res.status(201).send({ token })
   
-    let baseUrl = "https://" + req.get("host")
+    let baseUrl = req.protocol + "://" + req.get("host")
 
-    if (process.env.NODE_ENV = "development") {
-      baseUrl = "http://" + req.get("host")
-    }
     const secretCode = helper.createVerificationToken(req.body.email);
 
     console.log("secret Code", secretCode);
@@ -277,7 +274,7 @@ const User = {
     WHERE anvandarnamn LIKE ?`
 
     try {
-      const { rows } = await db.query(createQuery, [req.user.username])
+      const rows = await db.query(createQuery, [req.user.username])
       console.log("Username to use", req.user.username)
       console.log("USER data to send: ", rows)
       return res.status(201).send(rows)

@@ -284,7 +284,7 @@ var Friend = {
               createQuery = "UPDATE anvandare\n    SET\n      hemligt = ?\n    WHERE\n      anvandarnamn = ?\n    ";
               console.log("SECRET from backend", req.body.secret);
               _context8.next = 4;
-              return _db["default"].query(createQuery, [req.user.username, req.body.secret]);
+              return _db["default"].query(createQuery, [req.body.secret, req.user.username]);
 
             case 4:
               _context8.prev = 4;
@@ -344,7 +344,7 @@ var Friend = {
               createQuery = "UPDATE anvandare\n    SET\n      tips_mail = ?\n    WHERE\n      anvandarnamn = ?\n    ";
               console.log("TipsMail from backend", req.body.tips_mail);
               _context10.next = 4;
-              return _db["default"].query(createQuery, [req.user.username, req.body.tips_mail]);
+              return _db["default"].query(createQuery, [req.body.tips_mail, req.user.username]);
 
             case 4:
               _context10.prev = 4;

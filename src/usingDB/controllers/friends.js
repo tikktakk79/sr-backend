@@ -204,8 +204,8 @@ const Friend = {
     console.log("SECRET from backend", req.body.secret)
 
     await db.query(createQuery, [
-      req.user.username,
-      req.body.secret
+      req.body.secret,
+      req.user.username
     ])
     try {
       console.log("Set hemligt")
@@ -242,8 +242,9 @@ const Friend = {
     console.log("TipsMail from backend", req.body.tips_mail)
 
     await db.query(createQuery, [
-      req.user.username,
-      req.body.tips_mail
+      req.body.tips_mail,
+      req.user.username
+      
     ])
     try {
       console.log("Set tipsMail")

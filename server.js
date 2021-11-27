@@ -13,12 +13,18 @@ import RecWithDb from "./usingDB/controllers/recommendations"
 import FriendWithDb from "./usingDB/controllers/friends"
 import Auth from "./usingDB/middleware/Auth"
 import authenticateTokenWhilePending from "./usingDB/middleware/checkAuthWhilePending"
+import dotenv from "dotenv"
+import https from "https"
+import fs from "fs"
 
 const User = UserWithDb
 const Episode = EpisodeWithDb
 const Rec = RecWithDb
 const Friend = FriendWithDb
 const app = express()
+
+
+dotenv.config()
 
 
 const winston = require('winston');
@@ -50,15 +56,18 @@ if (process.env.NODE_ENV !== 'production') {
 
 let allowed
 
-if (process.env.DATABASE_URL.includes("localhost")) {
-  console.log("On localhost")
+console.log("Value of NODE_ENV", process.env.NODE_ENV)
+
+if (process.env.NODE_ENV === "development") {
+  console.log("NODE_ENV development")
   allowed = 
   ["http://localhost:8080"]
 } else {
-  console.log("Not on localhost")
-  allowed = ["https://sr-finder-frontend.herokuapp.com", "https://radioskugga.herokuapp.com","https://sr-frontend-vue.herokuapp.com", "https://www.sjoburger.com"]
+  console.log("NODE_ENV production")
+  allowed = ["https://www.radioskugga.org", "https://radioskugga.org"]
 }
   
+console.log("Allowed origins", allowed)
 
 let corsOptions = {
   origin: allowed
@@ -98,9 +107,9 @@ app.post("/api/tip/remove-all", Auth.verifyToken, Episode.removeAllTips)
 app.post("/api/tip/remove", Auth.verifyToken, Episode.removeOneTip)
 app.get("/api/tip", Auth.verifyToken, Episode.getTips)
 app.post("/api/tip/update", Auth.verifyToken, Episode.setOldTips)
-app.post("/api/rec", Auth.verifyToken, Rec.saveRec)
-app.get("/api/rec", Auth.verifyToken, Rec.listRecs)
-app.post("/api/rec/delete", Auth.verifyToken, Rec.deleteRec)
+// app.post("/api/rec", Auth.verifyToken, Rec.saveRec)
+// app.get("/api/rec", Auth.verifyToken, Rec.listRecs)
+// app.post("/api/rec/delete", Auth.verifyToken, Rec.deleteRec)
 app.post("/api/friend", Auth.verifyToken, Friend.addFriend)
 app.post("/api/friend/accept", Auth.verifyToken, Friend.acceptFriend)
 app.post("/api/friend/wait", Auth.verifyToken, Friend.waitFriend)
@@ -121,3 +130,8 @@ app.listen(PORT, () => {
   console.log(`Our app is running on port ${PORT}`)
   logger.info("App is up and running")
 })
+
+// https.createServer(options, app).listen(PORT, () => {
+//     console.log(`Our app is running on port ${PORT}`)
+//     logger.info("App is up and running")
+//   })

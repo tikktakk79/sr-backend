@@ -332,8 +332,7 @@ async gradeProgram(req, res) {
 
     try {
     //  const {rows: tipsReceived}  = await db.query(createQuery1, values)
-     const tipsReceived = await db.query(createQuery1, values)
-     console.log(tipsReceived)
+     let tipsReceived = await db.query(createQuery1, values)
      
      const tipsSent  = await db.query(createQuery2, values)
 
@@ -389,9 +388,20 @@ async gradeProgram(req, res) {
       AND
         avsnitt = ?
     `
+    const createQuery2 = `
+    SELECT * FROM sparade_avsnitt
+    WHERE
+      anvandare = ?
+    AND
+      tipsare = ?
+    AND
+      avsnitt = ?
+  `
   
     try {
       await db.query(createQuery, [req.user.username, req.body.user, req.body.episodeId])
+      let rows = await db.query(createQuery2, [req.user.username, req.body.user, req.body.episodeId])
+      console.log("Remove one tip done", rows)
       return res.status(204).send()
     } catch (error) {
       return res.status(400).send(error)

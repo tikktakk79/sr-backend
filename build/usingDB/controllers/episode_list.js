@@ -441,28 +441,27 @@ var Episode = {
 
             case 8:
               tipsReceived = _context12.sent;
-              console.log(tipsReceived);
-              _context12.next = 12;
+              _context12.next = 11;
               return _db["default"].query(createQuery2, values);
 
-            case 12:
+            case 11:
               tipsSent = _context12.sent;
               console.log("tipsSent inside getTips", tipsSent);
               console.log("tipsReceived inside getTips", tipsReceived);
               return _context12.abrupt("return", res.status(200).send([tipsSent, tipsReceived]));
 
-            case 18:
-              _context12.prev = 18;
+            case 17:
+              _context12.prev = 17;
               _context12.t0 = _context12["catch"](5);
               console.log("Fel i getTips", _context12.t0);
               return _context12.abrupt("return", res.status(400).send(_context12.t0));
 
-            case 22:
+            case 21:
             case "end":
               return _context12.stop();
           }
         }
-      }, _callee12, null, [[5, 18]]);
+      }, _callee12, null, [[5, 17]]);
     }))();
   },
   setOldTips: function setOldTips(req, res) {
@@ -523,7 +522,7 @@ var Episode = {
   },
   removeOneTip: function removeOneTip(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
-      var createQuery;
+      var createQuery, createQuery2, rows;
       return regeneratorRuntime.wrap(function _callee15$(_context15) {
         while (1) {
           switch (_context15.prev = _context15.next) {
@@ -531,24 +530,31 @@ var Episode = {
               console.log("Running removeOneTip");
               console.log("In backend:", req.body.user, req.body.episodeId);
               createQuery = "\n      DELETE FROM sparade_avsnitt\n      WHERE\n        anvandare = ?\n      AND\n        tipsare = ?\n      AND\n        avsnitt = ?\n    ";
-              _context15.prev = 3;
-              _context15.next = 6;
+              createQuery2 = "\n    SELECT * FROM sparade_avsnitt\n    WHERE\n      anvandare = ?\n    AND\n      tipsare = ?\n    AND\n      avsnitt = ?\n  ";
+              _context15.prev = 4;
+              _context15.next = 7;
               return _db["default"].query(createQuery, [req.user.username, req.body.user, req.body.episodeId]);
 
-            case 6:
-              return _context15.abrupt("return", res.status(204).send());
+            case 7:
+              _context15.next = 9;
+              return _db["default"].query(createQuery2, [req.user.username, req.body.user, req.body.episodeId]);
 
             case 9:
-              _context15.prev = 9;
-              _context15.t0 = _context15["catch"](3);
+              rows = _context15.sent;
+              console.log("Remove one tip done", rows);
+              return _context15.abrupt("return", res.status(204).send());
+
+            case 14:
+              _context15.prev = 14;
+              _context15.t0 = _context15["catch"](4);
               return _context15.abrupt("return", res.status(400).send(_context15.t0));
 
-            case 12:
+            case 17:
             case "end":
               return _context15.stop();
           }
         }
-      }, _callee15, null, [[3, 9]]);
+      }, _callee15, null, [[4, 14]]);
     }))();
   }
 };

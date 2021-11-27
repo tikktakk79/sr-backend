@@ -21,6 +21,12 @@ var _Auth = _interopRequireDefault(require("./usingDB/middleware/Auth"));
 
 var _checkAuthWhilePending = _interopRequireDefault(require("./usingDB/middleware/checkAuthWhilePending"));
 
+var _dotenv = _interopRequireDefault(require("dotenv"));
+
+var _https = _interopRequireDefault(require("https"));
+
+var _fs = _interopRequireDefault(require("fs"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 //import "babel-polyfill"
@@ -31,6 +37,8 @@ var Episode = _episode_list["default"];
 var Rec = _recommendations["default"];
 var Friend = _friends["default"];
 var app = (0, _express["default"])();
+
+_dotenv["default"].config();
 
 var winston = require('winston');
 
@@ -62,15 +70,17 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 var allowed;
+console.log("Value of NODE_ENV", process.env.NODE_ENV);
 
-if (process.env.DATABASE_URL.includes("localhost")) {
-  console.log("On localhost");
+if (process.env.NODE_ENV === "development") {
+  console.log("NODE_ENV development");
   allowed = ["http://localhost:8080"];
 } else {
-  console.log("Not on localhost");
-  allowed = ["https://sr-finder-frontend.herokuapp.com", "https://radioskugga.herokuapp.com", "https://sr-frontend-vue.herokuapp.com", "https://www.sjoburger.com"];
+  console.log("NODE_ENV production");
+  allowed = ["https://www.radioskugga.org", "https://radioskugga.org"];
 }
 
+console.log("Allowed origins", allowed);
 var corsOptions = {
   origin: allowed
 };
@@ -106,10 +116,10 @@ app.post("/api/tip", _Auth["default"].verifyToken, Episode.addTip);
 app.post("/api/tip/remove-all", _Auth["default"].verifyToken, Episode.removeAllTips);
 app.post("/api/tip/remove", _Auth["default"].verifyToken, Episode.removeOneTip);
 app.get("/api/tip", _Auth["default"].verifyToken, Episode.getTips);
-app.post("/api/tip/update", _Auth["default"].verifyToken, Episode.setOldTips);
-app.post("/api/rec", _Auth["default"].verifyToken, Rec.saveRec);
-app.get("/api/rec", _Auth["default"].verifyToken, Rec.listRecs);
-app.post("/api/rec/delete", _Auth["default"].verifyToken, Rec.deleteRec);
+app.post("/api/tip/update", _Auth["default"].verifyToken, Episode.setOldTips); // app.post("/api/rec", Auth.verifyToken, Rec.saveRec)
+// app.get("/api/rec", Auth.verifyToken, Rec.listRecs)
+// app.post("/api/rec/delete", Auth.verifyToken, Rec.deleteRec)
+
 app.post("/api/friend", _Auth["default"].verifyToken, Friend.addFriend);
 app.post("/api/friend/accept", _Auth["default"].verifyToken, Friend.acceptFriend);
 app.post("/api/friend/wait", _Auth["default"].verifyToken, Friend.waitFriend);
@@ -126,4 +136,7 @@ var PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
   console.log("Our app is running on port ".concat(PORT));
   logger.info("App is up and running");
-});
+}); // https.createServer(options, app).listen(PORT, () => {
+//     console.log(`Our app is running on port ${PORT}`)
+//     logger.info("App is up and running")
+//   })

@@ -18,7 +18,7 @@ var poolObject = {
   connectionString: process.env.DATABASE_URL
 };
 
-if (!process.env.DATABASE_URL.includes("localhost")) {
+if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes("localhost")) {
   poolObject.ssl = {
     rejectUnauthorized: false
   };
@@ -52,7 +52,9 @@ var _default = {
               console.log("Query failed", err);
               reject(err);
             } else {
+              console.log("Query resolved", rows);
               resolve(rows);
+              console.log("Code after resolve");
             }
 
             conn.release();

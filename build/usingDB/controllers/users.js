@@ -67,38 +67,33 @@ var User = {
               // req.session.token = token
               // return res.status(201).send({ token })
 
-              baseUrl = "https://" + req.get("host");
-
-              if (process.env.NODE_ENV = "development") {
-                baseUrl = "http://" + req.get("host");
-              }
-
+              baseUrl = req.protocol + "://" + req.get("host");
               secretCode = _helper["default"].createVerificationToken(req.body.email);
               console.log("secret Code", secretCode);
               values = [req.body.username, req.body.firstname, req.body.lastname, req.body.email, hashPassword, //hashPassword
               secretCode];
-              _context.prev = 11;
-              _context.next = 14;
+              _context.prev = 10;
+              _context.next = 13;
               return _db["default"].query(removeDuplicate, [values[3]]);
 
-            case 14:
-              _context.next = 19;
+            case 13:
+              _context.next = 18;
               break;
 
-            case 16:
-              _context.prev = 16;
-              _context.t0 = _context["catch"](11);
+            case 15:
+              _context.prev = 15;
+              _context.t0 = _context["catch"](10);
               console.log("Error in register db query", _context.t0);
 
-            case 19:
-              _context.prev = 19;
+            case 18:
+              _context.prev = 18;
               console.log("Before create query in db");
-              _context.next = 23;
+              _context.next = 22;
               return _db["default"].query(createQuery, values);
 
-            case 23:
+            case 22:
               console.log("After create query");
-              _context.prev = 24;
+              _context.prev = 23;
               _mailOptions = {
                 from: process.env.EMAIL_ADDRESS,
                 to: req.body.email,
@@ -107,7 +102,7 @@ var User = {
                 html: "<p>Anv\xE4nd f\xF6ljande l\xE4nk f\xF6r att aktivera ditt konto p\xE5 Radioskugga: &nbsp;<strong></p><h3><a href=\"".concat(baseUrl, "/api/user/verification/verify-account/").concat(secretCode, "\" target=\"_blank\">Aktivera konto</a></strong></h3>")
               };
               console.log("Trying to send email");
-              _context.next = 29;
+              _context.next = 28;
               return _helper["default"].transporter.sendMail(_mailOptions, function (error, info) {
                 if (error) {
                   console.log("Error sending mail", error);
@@ -117,28 +112,28 @@ var User = {
                 }
               });
 
-            case 29:
+            case 28:
               console.log("Mail sent");
-              _context.next = 35;
+              _context.next = 34;
               break;
 
-            case 32:
-              _context.prev = 32;
-              _context.t1 = _context["catch"](24);
+            case 31:
+              _context.prev = 31;
+              _context.t1 = _context["catch"](23);
               console.log("Error in register db query", _context.t1);
 
-            case 35:
-              _context.next = 45;
+            case 34:
+              _context.next = 44;
               break;
 
-            case 37:
-              _context.prev = 37;
-              _context.t2 = _context["catch"](19);
+            case 36:
+              _context.prev = 36;
+              _context.t2 = _context["catch"](18);
               console.log("rror routine", _context.t2.routine);
               console.log("Användarnamnet är upptaget");
 
               if (!(_context.t2.routine === "_bt_check_unique")) {
-                _context.next = 43;
+                _context.next = 42;
                 break;
               }
 
@@ -146,16 +141,16 @@ var User = {
                 message: "Username taken"
               }));
 
-            case 43:
+            case 42:
               console.log("Something failed and I don't know what!");
               return _context.abrupt("return", res.status(400).send(_context.t2));
 
-            case 45:
+            case 44:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[11, 16], [19, 37], [24, 32]]);
+      }, _callee, null, [[10, 15], [18, 36], [23, 31]]);
     }))();
   },
 
@@ -434,8 +429,7 @@ var User = {
   },
   getUserData: function getUserData(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-      var createQuery, _yield$db$query2, rows;
-
+      var createQuery, rows;
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
           switch (_context6.prev = _context6.next) {
@@ -446,23 +440,22 @@ var User = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 4:
-              _yield$db$query2 = _context6.sent;
-              rows = _yield$db$query2.rows;
+              rows = _context6.sent;
               console.log("Username to use", req.user.username);
               console.log("USER data to send: ", rows);
               return _context6.abrupt("return", res.status(201).send(rows));
 
-            case 11:
-              _context6.prev = 11;
+            case 10:
+              _context6.prev = 10;
               _context6.t0 = _context6["catch"](1);
               return _context6.abrupt("return", res.status(400).send(_context6.t0));
 
-            case 14:
+            case 13:
             case "end":
               return _context6.stop();
           }
         }
-      }, _callee6, null, [[1, 11]]);
+      }, _callee6, null, [[1, 10]]);
     }))();
   },
   searchUsers: function searchUsers(req, res) {
