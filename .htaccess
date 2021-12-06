@@ -1,0 +1,8 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/sjoburger/domains/backend.radioskugga.org"
+PassengerBaseURI "/"
+PassengerNodejs "/home/sjoburger/nodevenv/domains/backend.radioskugga.org/12/bin/node"
+PassengerAppType node
+PassengerStartupFile build/server.js
+PassengerAppLogFile "/home/sjoburger/logs/sr-backend.log"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END

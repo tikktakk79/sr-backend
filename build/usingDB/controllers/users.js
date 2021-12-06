@@ -123,17 +123,18 @@ var User = {
               console.log("Error in register db query", _context.t1);
 
             case 34:
-              _context.next = 44;
+              _context.next = 45;
               break;
 
             case 36:
               _context.prev = 36;
               _context.t2 = _context["catch"](18);
-              console.log("rror routine", _context.t2.routine);
+              console.log("ERROR in register", _context.t2);
+              console.log("error routine", _context.t2.routine);
               console.log("Användarnamnet är upptaget");
 
-              if (!(_context.t2.routine === "_bt_check_unique")) {
-                _context.next = 42;
+              if (!(_context.t2.code === "ER_DUP_ENTRY")) {
+                _context.next = 43;
                 break;
               }
 
@@ -141,11 +142,11 @@ var User = {
                 message: "Username taken"
               }));
 
-            case 42:
+            case 43:
               console.log("Something failed and I don't know what!");
               return _context.abrupt("return", res.status(400).send(_context.t2));
 
-            case 44:
+            case 45:
             case "end":
               return _context.stop();
           }
@@ -162,7 +163,8 @@ var User = {
    */
   loginUser: function loginUser(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var text, rows, token;
+      var text, rows, errObj, _errObj, token;
+
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
@@ -185,74 +187,86 @@ var User = {
               console.log("2We got to here!");
               console.log("AND HERE");
               console.log("UNAME", req.body.username);
-              _context2.prev = 9;
+              errObj = {};
+              _context2.prev = 10;
               // rows = await db.query(text, [req.body.username])
               console.log("Query text", text);
-              _context2.next = 13;
+              _context2.next = 14;
               return _db["default"].query(text, [req.body.username]);
 
-            case 13:
+            case 14:
               rows = _context2.sent;
-              _context2.next = 19;
+              _context2.next = 20;
               break;
 
-            case 16:
-              _context2.prev = 16;
-              _context2.t0 = _context2["catch"](9);
+            case 17:
+              _context2.prev = 17;
+              _context2.t0 = _context2["catch"](10);
               console.log("Error i login query", _context2.t0);
 
-            case 19:
+            case 20:
               console.log("Queryn funkade här kommer rows", rows);
 
               if (rows[0]) {
-                _context2.next = 25;
+                _context2.next = 29;
                 break;
               }
 
-              res.statusMessage = "No match for user in database";
-              return _context2.abrupt("return", res.status(400).send());
+              console.log("No match for user in database");
+              errObj = {
+                statusText: "No match for user in database"
+              };
+              res.status(400);
+              res.send(errObj);
+              return _context2.abrupt("return");
 
-            case 25:
+            case 29:
               if (!(rows[0].status !== "member")) {
-                _context2.next = 28;
+                _context2.next = 33;
                 break;
               }
 
-              res.statusMessage = "User not verified";
-              return _context2.abrupt("return", res.status(400).send());
+              errObj = {
+                statusText: "User not verified"
+              };
+              res.status(400).send(errObj);
+              return _context2.abrupt("return");
 
-            case 28:
+            case 33:
               console.log("333We got to here!");
               console.log("Användarnamn stämmer");
 
               if (_helper["default"].comparePassword(rows[0].losenord, req.body.password)) {
-                _context2.next = 34;
+                _context2.next = 40;
                 break;
               }
 
               console.log("Compare pasword sket sig..");
-              res.statusMessage = "Current password does not match";
-              return _context2.abrupt("return", res.status(400).send());
+              _errObj = {
+                statusText: "Current password does not match"
+              };
+              res.status(400).send(_errObj);
+              return _context2.abrupt("return");
 
-            case 34:
+            case 40:
               console.log("KOM enda hit");
               token = _helper["default"].generateToken(rows[0].anvandarnamn);
               return _context2.abrupt("return", res.status(200).send({
                 token: token
               }));
 
-            case 39:
-              _context2.prev = 39;
+            case 45:
+              _context2.prev = 45;
               _context2.t1 = _context2["catch"](5);
               console.log("ERROR", _context2.t1);
               return _context2.abrupt("return", res.status(400).send(_context2.t1));
 
-            case 43:
+            case 49:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, null, [[5, 39], [9, 16]]);
+      }, _callee2, null, [[5, 45], [10, 17]]);
     }))();
   },
 

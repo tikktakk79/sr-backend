@@ -100,15 +100,15 @@ const User = {
         console.log("Error in register db query", error);
         }
       } catch (error) {
-        console.log("rror routine", error.routine);
+        console.log("ERROR in register", error)
+        console.log("error routine", error.code);
         console.log("Användarnamnet är upptaget");
-        if (error.routine === "_bt_check_unique") {
+        if (error.code === "ER_DUP_ENTRY") {
           return res.status(400).send({message: "Username taken"})
         }
         console.log("Something failed and I don't know what!")
         return res.status(400).send(error)
       }
-    
   },
   /**
    * Login
@@ -131,6 +131,8 @@ const User = {
       
       let rows 
 
+      let errObj = {}
+
       try {
         // rows = await db.query(text, [req.body.username])
         console.log("Query text", text)
@@ -141,24 +143,23 @@ const User = {
       }
       console.log("Queryn funkade här kommer rows", rows)
       if (!rows[0]) {
-        res.statusMessage = "No match for user in database"
-        return res
-          .status(400)
-          .send()
+        console.log("No match for user in database")
+        errObj = {statusText: "No match for user in database"}
+        res.status(400)
+        res.send(errObj)
+        return
       } else if (rows[0].status !== "member"){
-        res.statusMessage = "User not verified"
-        return res
-        .status(400)
-        .send()
+        errObj = {statusText: "User not verified"}
+        res.status(400).send(errObj)
+        return
       }
       console.log("333We got to here!")
       console.log("Användarnamn stämmer")
       if (!helper.comparePassword(rows[0].losenord, req.body.password)) {
         console.log("Compare pasword sket sig..")
-        res.statusMessage = "Current password does not match"
-        return res
-          .status(400)
-          .send()
+        let errObj = {statusText: "Current password does not match"}
+        res.status(400).send(errObj)
+        return
       }
 
       console.log("KOM enda hit")
