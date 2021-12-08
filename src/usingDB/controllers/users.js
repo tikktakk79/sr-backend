@@ -48,8 +48,16 @@ const User = {
     // const token = helper.generateToken(rows[0].anvandarnamn)
     // req.session.token = token
     // return res.status(201).send({ token })
+
+    let chosenProtocol = "https"
+
+    let host = req.get("host")
+
+    if (host.includes("localhost")) {
+      chosenProtocol = "http"
+    }
   
-    let baseUrl = req.protocol + "://" + req.get("host")
+    let baseUrl = chosenProtocol + "://" + req.get("host")
 
     const secretCode = helper.createVerificationToken(req.body.email);
 

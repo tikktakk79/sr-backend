@@ -43,7 +43,7 @@ var User = {
    */
   createUser: function createUser(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var hashPassword, removeDuplicate, createQuery, baseUrl, secretCode, values, _mailOptions;
+      var hashPassword, removeDuplicate, createQuery, chosenProtocol, host, baseUrl, secretCode, values, _mailOptions;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -67,33 +67,40 @@ var User = {
               // req.session.token = token
               // return res.status(201).send({ token })
 
-              baseUrl = req.protocol + "://" + req.get("host");
+              chosenProtocol = "https";
+              host = req.get("host");
+
+              if (host.includes("localhost")) {
+                chosenProtocol = "http";
+              }
+
+              baseUrl = chosenProtocol + "://" + req.get("host");
               secretCode = _helper["default"].createVerificationToken(req.body.email);
               console.log("secret Code", secretCode);
               values = [req.body.username, req.body.firstname, req.body.lastname, req.body.email, hashPassword, //hashPassword
               secretCode];
-              _context.prev = 10;
-              _context.next = 13;
+              _context.prev = 13;
+              _context.next = 16;
               return _db["default"].query(removeDuplicate, [values[3]]);
 
-            case 13:
-              _context.next = 18;
+            case 16:
+              _context.next = 21;
               break;
-
-            case 15:
-              _context.prev = 15;
-              _context.t0 = _context["catch"](10);
-              console.log("Error in register db query", _context.t0);
 
             case 18:
               _context.prev = 18;
+              _context.t0 = _context["catch"](13);
+              console.log("Error in register db query", _context.t0);
+
+            case 21:
+              _context.prev = 21;
               console.log("Before create query in db");
-              _context.next = 22;
+              _context.next = 25;
               return _db["default"].query(createQuery, values);
 
-            case 22:
+            case 25:
               console.log("After create query");
-              _context.prev = 23;
+              _context.prev = 26;
               _mailOptions = {
                 from: process.env.EMAIL_ADDRESS,
                 to: req.body.email,
@@ -102,7 +109,7 @@ var User = {
                 html: "<p>Anv\xE4nd f\xF6ljande l\xE4nk f\xF6r att aktivera ditt konto p\xE5 Radioskugga: &nbsp;<strong></p><h3><a href=\"".concat(baseUrl, "/api/user/verification/verify-account/").concat(secretCode, "\" target=\"_blank\">Aktivera konto</a></strong></h3>")
               };
               console.log("Trying to send email");
-              _context.next = 28;
+              _context.next = 31;
               return _helper["default"].transporter.sendMail(_mailOptions, function (error, info) {
                 if (error) {
                   console.log("Error sending mail", error);
@@ -112,29 +119,29 @@ var User = {
                 }
               });
 
-            case 28:
-              console.log("Mail sent");
-              _context.next = 34;
-              break;
-
             case 31:
-              _context.prev = 31;
-              _context.t1 = _context["catch"](23);
-              console.log("Error in register db query", _context.t1);
+              console.log("Mail sent");
+              _context.next = 37;
+              break;
 
             case 34:
-              _context.next = 45;
+              _context.prev = 34;
+              _context.t1 = _context["catch"](26);
+              console.log("Error in register db query", _context.t1);
+
+            case 37:
+              _context.next = 48;
               break;
 
-            case 36:
-              _context.prev = 36;
-              _context.t2 = _context["catch"](18);
+            case 39:
+              _context.prev = 39;
+              _context.t2 = _context["catch"](21);
               console.log("ERROR in register", _context.t2);
               console.log("error routine", _context.t2.code);
               console.log("Användarnamnet är upptaget");
 
               if (!(_context.t2.code === "ER_DUP_ENTRY")) {
-                _context.next = 43;
+                _context.next = 46;
                 break;
               }
 
@@ -142,16 +149,16 @@ var User = {
                 message: "Username taken"
               }));
 
-            case 43:
+            case 46:
               console.log("Something failed and I don't know what!");
               return _context.abrupt("return", res.status(400).send(_context.t2));
 
-            case 45:
+            case 48:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[10, 15], [18, 36], [23, 31]]);
+      }, _callee, null, [[13, 18], [21, 39], [26, 34]]);
     }))();
   },
 
