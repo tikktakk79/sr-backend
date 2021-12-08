@@ -106,7 +106,9 @@ const Helper = {
         anvandarnamn LIKE ?
     `
 
-    let { rows } = await db.query(createQuery1, [req.body.username])
+    let rows = await db.query(createQuery1, [req.body.username])
+
+    console.log("rows from permissionFriend", rows)
 
     if (!rows[0].hemligt) {
       console.log("TRUE DAT");
@@ -123,9 +125,9 @@ const Helper = {
       (godkann IS NULL OR godkann LIKE ?)
     `
 
-    let rows2 = await db.query(createQuery2, [req.user.username, req.body.username])
+    let rows2 = await db.query(createQuery2, [req.user.username, req.body.username,req.user.username, req.body.username,req.user.username])
     
-    if(rows2.rows.length) {
+    if(rows2[0].length) {
       console.log("TRUE DAT");
       return true
     }

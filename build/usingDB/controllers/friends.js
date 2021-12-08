@@ -244,8 +244,7 @@ var Friend = {
   },
   getSecret: function getSecret(req, res) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-      var createQuery, _yield$db$query2, rows;
-
+      var createQuery, rows;
       return regeneratorRuntime.wrap(function _callee7$(_context7) {
         while (1) {
           switch (_context7.prev = _context7.next) {
@@ -255,23 +254,22 @@ var Friend = {
               return _db["default"].query(createQuery, [req.user.username]);
 
             case 3:
-              _yield$db$query2 = _context7.sent;
-              rows = _yield$db$query2.rows;
-              _context7.prev = 5;
+              rows = _context7.sent;
+              _context7.prev = 4;
               console.log("Got hemligt from user in db", rows);
-              return _context7.abrupt("return", res.status(200).send(rows));
+              return _context7.abrupt("return", res.status(200).send(rows[0]));
 
-            case 10:
-              _context7.prev = 10;
-              _context7.t0 = _context7["catch"](5);
+            case 9:
+              _context7.prev = 9;
+              _context7.t0 = _context7["catch"](4);
               return _context7.abrupt("return", res.status(400).send(_context7.t0));
 
-            case 13:
+            case 12:
             case "end":
               return _context7.stop();
           }
         }
-      }, _callee7, null, [[5, 10]]);
+      }, _callee7, null, [[4, 9]]);
     }))();
   },
   setSecret: function setSecret(req, res) {

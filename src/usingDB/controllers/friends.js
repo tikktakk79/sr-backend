@@ -184,10 +184,10 @@ const Friend = {
         anvandarnamn = ?
     `
 
-    const { rows } = await db.query(createQuery, [req.user.username])
+    const rows = await db.query(createQuery, [req.user.username])
     try {
       console.log("Got hemligt from user in db", rows)
-      return res.status(200).send(rows)
+      return res.status(200).send(rows[0])
     } catch (error) {
       return res.status(400).send(error)
     }
@@ -243,8 +243,7 @@ const Friend = {
 
     await db.query(createQuery, [
       req.body.tips_mail,
-      req.user.username
-      
+      req.user.username   
     ])
     try {
       console.log("Set tipsMail")

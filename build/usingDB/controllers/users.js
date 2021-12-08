@@ -130,7 +130,7 @@ var User = {
               _context.prev = 36;
               _context.t2 = _context["catch"](18);
               console.log("ERROR in register", _context.t2);
-              console.log("error routine", _context.t2.routine);
+              console.log("error routine", _context.t2.code);
               console.log("Användarnamnet är upptaget");
 
               if (!(_context.t2.code === "ER_DUP_ENTRY")) {

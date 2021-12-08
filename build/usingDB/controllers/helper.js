@@ -112,8 +112,7 @@ var Helper = {
   },
   permissionFriend: function permissionFriend(db, req) {
     return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-      var createQuery1, _yield$db$query, rows, createQuery2, rows2;
-
+      var createQuery1, rows, createQuery2, rows2;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -123,8 +122,8 @@ var Helper = {
               return db.query(createQuery1, [req.body.username]);
 
             case 3:
-              _yield$db$query = _context.sent;
-              rows = _yield$db$query.rows;
+              rows = _context.sent;
+              console.log("rows from permissionFriend", rows);
 
               if (rows[0].hemligt) {
                 _context.next = 8;
@@ -137,12 +136,12 @@ var Helper = {
             case 8:
               createQuery2 = "\n    select * from vanner\n    where \n      (anvandare1 LIKE ? AND anvandare2 LIKE ?)\n    OR \n      (anvandare2 LIKE ? AND anvandare1 LIKE ?)\n    AND  \n      (godkann IS NULL OR godkann LIKE ?)\n    ";
               _context.next = 11;
-              return db.query(createQuery2, [req.user.username, req.body.username]);
+              return db.query(createQuery2, [req.user.username, req.body.username, req.user.username, req.body.username, req.user.username]);
 
             case 11:
               rows2 = _context.sent;
 
-              if (!rows2.rows.length) {
+              if (!rows2[0].length) {
                 _context.next = 15;
                 break;
               }
