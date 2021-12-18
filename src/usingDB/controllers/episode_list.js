@@ -251,7 +251,7 @@ async gradeProgram(req, res) {
 
     const createQuery2 = 
     `select 
-      EXTRACT(EPOCH FROM (current_timestamp - tipsad)) 
+      TIMESTAMPDIFF(SECOND, tipsad, current_timestamp) 
     AS difference, email, tips_mail 
       from anvandare
     WHERE
@@ -268,7 +268,10 @@ async gradeProgram(req, res) {
 
     try {
       await db.query(createQuery, values)
-      const { rows: tipTime } = await db.query(createQuery2, values2)
+      console.log("checking tiptime")
+      const tipTime = await db.query(createQuery2, values2)
+      console.log("tiptime rows", tipTime)
+
 
       if (tipTime[0].tips_mail && tipTime[0].email && (!tipTime[0].difference || tipTime[0].difference > 60 * 60 * 6 )) {
         console.log("SENDING EMAIL TIP")
@@ -277,7 +280,7 @@ async gradeProgram(req, res) {
         const baseUrl = req.protocol + "://" + req.get("host");
 
         const mailOptions = {
-          from: 'administrator@radioskugga.org',
+          from: 'noreply@radioskugga.org',
           to: tipTime[0].email,
           subject: 'Nya tips på Radioskugga',
           text: `Du har fått nya lyssningstips!`,
